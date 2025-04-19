@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Panel{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+    :root {
+        --primary-color: #052d14;
+        --secondary-color: #087d04;
+        --background-color: #f3f4f6;
+        --border-radius: 8px;
+        --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        --transition: all 0.3s ease;
+    }
+
+    .admin-navbar {
+        background-color: var(--primary-color);
+        padding: 0 2rem;
+        box-shadow: var(--shadow);
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0; /* Added to ensure proper alignment */
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        height: 64px;
+        box-sizing: border-box; /* Added to include padding in width calculation */
+    }
+
+    .nav-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-left: auto; /* Added to push nav-container to the right */
+    }
+
+    .nav-brand {
+        color: #ffffff;
+        font-size: 1.25rem;
+        font-weight: 600;
+        padding: 0.5rem 0;
+        flex-shrink: 0; /* Prevent brand from shrinking */
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        flex-wrap: nowrap; /* Prevent wrapping of nav links */
+    }
+
+    .nav-links li a {
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        font-size: 0.95rem;
+        display: block;
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+
+    .nav-links li a:hover,
+    .nav-links li a.active {
+        background-color: #1e9815;
+    }
+
+    .logout-container {
+        margin-left: 1rem;
+        padding-left: 1rem;
+        border-left: 1px solid rgba(255, 255, 255, 0.2);
+        flex-shrink: 0; /* Prevent logout container from shrinking */
+    }
+
+    .logout-btn {
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        transition: var(--transition);
+        font-size: 0.95rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        display: block;
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+
+    .logout-btn:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .mobile-menu-btn {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        padding-top: 80px;
+    }
+
+    @media (max-width: 768px) {
+        .admin-navbar {
+            padding: 0 1rem;
+        }
+
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .nav-container {
+            display: none;
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            background-color: var(--primary-color);
+            flex-direction: column;
+            padding: 1rem;
+            box-shadow: var(--shadow);
+            align-items: stretch;
+            margin-left: 0; /* Reset margin for mobile */
+        }
+
+        .nav-container.active {
+            display: flex;
+        }
+
+        .nav-links {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .nav-links li {
+            width: 100%;
+        }
+
+        .nav-links li a {
+            width: 100%;
+            padding: 0.75rem 1rem;
+        }
+
+        .logout-container {
+            margin: 0;
+            padding: 0;
+            border-left: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .logout-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+    .navbar-brand {
+    display: flex;
+    align-items: center;  /* Align items vertically */
+    gap: 10px; 
+    text-decoration: none;/* Adjust space between logo and text */
+}
+
+.navbar-brand img {
+    height: 40px; /* Adjust logo size */
+    width: auto;
+}
+
+.navbar-brand h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    color: white;
+    white-space: nowrap; /* Prevent wrapping */
+}
+    </style>
+    {% block additional_styles %}{% endblock %}
+</head>
+<body>
+    <nav class="admin-navbar">
+        <div class="nav-brand"><a class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo9-removebg.png') }}" alt="Eco Logo">
+            <h1>Plastic Cleanup And Sales System</h1>
+        </a></div>
+        <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
+        <div class="nav-container">
+            <ul class="nav-links" id="navLinks">
+                <li><a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a></li>
+                <li><a href="{{ url_for('admin_users') }}" class="{{ 'active' if request.endpoint == 'admin_users' }}">
+                    <i class="fas fa-users"></i> Users
+                </a></li>
+                <li><a href="{{ url_for('admin_events') }}" class="{{ 'active' if request.endpoint == 'admin_events' }}">
+                    <i class="fas fa-calendar-alt"></i> Events
+                </a></li>
+                <li><a href="{{ url_for('admin_donations') }}" class="{{ 'active' if request.endpoint == 'admin_donations' }}">
+                    <i class="fas fa-hand-holding-heart"></i> Donations
+                </a></li>
+                <li><a href="{{ url_for('admin_products') }}" class="{{ 'active' if request.endpoint == 'admin_products' }}">
+                    <i class="fas fa-box"></i> Products
+                </a></li>
+                <li><a href="{{ url_for('admin_buyers') }}" class="{{ 'active' if request.endpoint == 'admin_buyers' }}">
+                    <i class="fas fa-shopping-cart"></i> Buyers
+                </a></li>
+                <li><a href="{{ url_for('admin_reports') }}" class="{{ 'active' if request.endpoint == 'admin_reports' }}">
+                    <i class="fas fa-chart-line"></i> Reports
+                </a></li>
+               <!--- <li><a href="{{ url_for('admin_powerbi_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_powerbi_dashboard' }}">
+                    <i class="fas fa-chart-line"></i> Powerbi
+                </a></li>-->
+            </ul>
+            
+            <div class="logout-container">
+                <a href="{{ url_for('logout') }}" class="logout-btn"> <i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+    </nav>    
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+    <script>
+         function toggleMobileMenu() {
+        const navLinks = document.getElementById('navLinks');
+        navLinks.classList.toggle('active');
+    }
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const navbar = document.querySelector('.admin-navbar');
+        const navLinks = document.getElementById('navLinks');
+        
+        if (!navbar.contains(event.target)) {
+            navLinks.classList.remove('active');
+        }
+    });
+    </script>
+</body>
+</html>

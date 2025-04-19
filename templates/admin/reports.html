@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Reports</title>
+
+    <!-- Bootstrap & FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Color Variables */
+        :root {
+            --primary-color: #052d14;
+            --secondary-color: #087d04;
+            --accent-color: #4adb34;
+            --background-color: #f5f7f6;
+            --card-background: #ffffff;
+        }
+
+        /* General Styling */
+        body {
+            background-color: var(--background-color);
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin: 40px auto;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        h1 {
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .report-card {
+            background: var(--card-background);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* Graph Styling */
+        .chart-container {
+            width: 100%;
+            max-width: 900px;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="report-card">
+            <h1><i class="fas fa-chart-bar"></i> Monthly Event Reports</h1>
+            <div class="chart-container">
+                <canvas id="eventChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="report-card">
+            <h1><i class="fas fa-user-tie"></i> Top Organizers</h1>
+            <div class="table-container">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Organizer Name</th>
+                            <th>Events Hosted</th>
+                            <th>Plastics Collected (kg)</th>
+                            <th>Products Recycled</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for organizer in top_organizers %}
+                        <tr>
+                            <td>{{ organizer.username }}</td>
+                            <td>{{ organizer.event_count }}</td>
+                            <td>{{ organizer.total_plastics }}</td>
+                            <td>{{ organizer.total_products_recycled }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get data from Flask
+        const months = [{% for stat in monthly_stats %}"{{ stat.month }}",{% endfor %}];
+        const eventCounts = [{% for stat in monthly_stats %}{{ stat.event_count }},{% endfor %}];
+        const plasticsCollected = [{% for stat in monthly_stats %}{{ stat.plastics_collected }},{% endfor %}];
+        const productsRecycled = [{% for stat in monthly_stats %}{{ stat.total_products_recycled }},{% endfor %}];
+
+        // Chart.js for Monthly Reports
+        const ctx = document.getElementById('eventChart').getContext('2d');
+        const eventChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'Events Completed',
+                        data: eventCounts,
+                        backgroundColor: 'rgba(155, 89, 182, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Plastics Collected (kg)',
+                        data: plasticsCollected,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Products Recycled',
+                        data: productsRecycled,
+                        backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

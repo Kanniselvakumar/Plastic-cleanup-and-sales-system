@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>Power BI Analytics Dashboard</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <p><i class="fas fa-info-circle"></i> This page embeds your Power BI dashboard. You can also access the data via API endpoints or connect Power BI directly to your database.</p>
+                        </div>
+                        
+                        <!-- Power BI Embed container -->
+                        <div id="powerBIEmbed" style="height: 800px; width: 100%;"></div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>API Endpoints for Power BI</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul>
+                                            <li><code>/api/dashboard-stats</code> - Overall statistics</li>
+                                            <li><code>/api/monthly-stats</code> - Monthly event and recycling data</li>
+                                            <li><code>/api/top-organizers</code> - Top performing organizers</li>
+                                            <li><code>/api/donations</code> - Donation records</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5>Database Connection Details</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>To connect Power BI directly to your database:</p>
+                                        <ol>
+                                            <li>In Power BI Desktop, select "Get Data" > "Database" > "MySQL Database"</li>
+                                            <li>Enter your server information and credentials</li>
+                                            <li>Select relevant tables or use custom SQL queries</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data visualization when Power BI is not configured -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // First try to load Power BI if it's configured
+            const embedUrl = "YOUR_POWER_BI_EMBED_URL";
+            const reportId = "YOUR_REPORT_ID";
+            const accessToken = "YOUR_ACCESS_TOKEN";
+
+            if (embedUrl === "YOUR_POWER_BI_EMBED_URL") {
+                // Power BI not configured, show alternative visualization
+                showAlternativeVisualization();
+                return;
+            }
+
+            // Load Power BI embedding if configured
+            if (window.powerbi) {
+                const embedConfig = {
+                    type: 'report',
+                    tokenType: window['powerbi-client'].models.TokenType.Embed,
+                    accessToken: accessToken,
+                    embedUrl: embedUrl,
+                    id: reportId,
+                    permissions: window['powerbi-client'].models.Permissions.All,
+                    settings: {
+                        filterPaneEnabled: true,
+                        navContentPaneEnabled: true
+                    }
+                };
+
+                const reportContainer = document.getElementById('powerBIEmbed');
+                const report = window.powerbi.embed(reportContainer, embedConfig);
+
+                report.on('loaded', function() {
+                    console.log('Power BI report loaded');
+                });
+
+                report.on('error', function(event) {
+                    console.error('Power BI embed error:', event.detail);
+                    showAlternativeVisualization();
+                });
+            } else {
+                showAlternativeVisualization();
+            }
+        });
+
+        // Show alternative visualization using chart.js when Power BI is not configured
+        function showAlternativeVisualization() {
+            const container = document.getElementById('powerBIEmbed');
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Add dashboard message
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'alert alert-warning mb-4';
+            messageDiv.innerHTML = '<p><strong>Power BI embed configuration not set.</strong> Displaying alternative dashboard with sample data from API endpoints. To use Power BI embed, please update the template with your Power BI credentials.</p>';
+            container.appendChild(messageDiv);
+            
+            // Create dashboard layout
+            const dashboardDiv = document.createElement('div');
+            dashboardDiv.className = 'row';
+            container.appendChild(dashboardDiv);
+            
+            // Stats cards row
+            const statsRow = document.createElement('div');
+            statsRow.className = 'row mb-4';
+            dashboardDiv.appendChild(statsRow);
+            
+            // Sample data - replace with actual API calls in production
+            const stats = {
+                organiser_count: 24,
+                volunteer_count: 156,
+                event_count: 48,
+                completed_events: 42,
+                total_plastics_collected: 12450.5,
+                total_donations: 8750.25
+            };
+            
+            // Create stat cards
+            createStatCard(statsRow, 'Organizers', stats.organiser_count, 'fas fa-users text-primary');
+            createStatCard(statsRow, 'Volunteers', stats.volunteer_count, 'fas fa-hands-helping text-success');
+            createStatCard(statsRow, 'Total Events', stats.event_count, 'fas fa-calendar-check text-info');
+            createStatCard(statsRow, 'Completed Events', stats.completed_events, 'fas fa-clipboard-check text-warning');
+            
+            // Charts row
+            const chartsRow = document.createElement('div');
+            chartsRow.className = 'row mb-4';
+            dashboardDiv.appendChild(chartsRow);
+            
+            // Monthly events chart
+            const monthlyChartCol = document.createElement('div');
+            monthlyChartCol.className = 'col-md-6 mb-4';
+            chartsRow.appendChild(monthlyChartCol);
+            
+            const monthlyChartCard = document.createElement('div');
+            monthlyChartCard.className = 'card h-100';
+            monthlyChartCol.appendChild(monthlyChartCard);
+            
+            const monthlyChartHeader = document.createElement('div');
+            monthlyChartHeader.className = 'card-header';
+            monthlyChartHeader.innerHTML = '<h5>Monthly Events</h5>';
+            monthlyChartCard.appendChild(monthlyChartHeader);
+            
+            const monthlyChartBody = document.createElement('div');
+            monthlyChartBody.className = 'card-body';
+            monthlyChartCard.appendChild(monthlyChartBody);
+            
+            const monthlyChartCanvas = document.createElement('canvas');
+            monthlyChartCanvas.id = 'monthlyEventsChart';
+            monthlyChartBody.appendChild(monthlyChartCanvas);
+            
+            // Plastics collected chart
+            const plasticsChartCol = document.createElement('div');
+            plasticsChartCol.className = 'col-md-6 mb-4';
+            chartsRow.appendChild(plasticsChartCol);
+            
+            const plasticsChartCard = document.createElement('div');
+            plasticsChartCard.className = 'card h-100';
+            plasticsChartCol.appendChild(plasticsChartCard);
+            
+            const plasticsChartHeader = document.createElement('div');
+            plasticsChartHeader.className = 'card-header';
+            plasticsChartHeader.innerHTML = '<h5>Plastics Collected (kg)</h5>';
+            plasticsChartCard.appendChild(plasticsChartHeader);
+            
+            const plasticsChartBody = document.createElement('div');
+            plasticsChartBody.className = 'card-body';
+            plasticsChartCard.appendChild(plasticsChartBody);
+            
+            const plasticsChartCanvas = document.createElement('canvas');
+            plasticsChartCanvas.id = 'plasticsCollectedChart';
+            plasticsChartBody.appendChild(plasticsChartCanvas);
+            
+            // Sample monthly data - replace with actual API calls
+            const monthlyData = [
+                { month: '2024-09', event_count: 5, plastics_collected: 1225.5, total_products_recycled: 350 },
+                { month: '2024-08', event_count: 4, plastics_collected: 980.2, total_products_recycled: 280 },
+                { month: '2024-07', event_count: 6, plastics_collected: 1456.3, total_products_recycled: 410 },
+                { month: '2024-06', event_count: 3, plastics_collected: 765.8, total_products_recycled: 220 },
+                { month: '2024-05', event_count: 5, plastics_collected: 1100.6, total_products_recycled: 320 },
+                { month: '2024-04', event_count: 4, plastics_collected: 950.2, total_products_recycled: 270 }
+            ];
+            
+            // Create charts
+            createMonthlyEventsChart(monthlyChartCanvas, monthlyData);
+            createPlasticsCollectedChart(plasticsChartCanvas, monthlyData);
+            
+            // Top organizers table
+            const tableRow = document.createElement('div');
+            tableRow.className = 'row';
+            dashboardDiv.appendChild(tableRow);
+            
+            const tableCol = document.createElement('div');
+            tableCol.className = 'col-12';
+            tableRow.appendChild(tableCol);
+            
+            const tableCard = document.createElement('div');
+            tableCard.className = 'card';
+            tableCol.appendChild(tableCard);
+            
+            const tableHeader = document.createElement('div');
+            tableHeader.className = 'card-header';
+            tableHeader.innerHTML = '<h5>Top Organizers</h5>';
+            tableCard.appendChild(tableHeader);
+            
+            const tableBody = document.createElement('div');
+            tableBody.className = 'card-body';
+            tableCard.appendChild(tableBody);
+            
+            // Sample top organizers data - replace with actual API calls
+            const topOrganizers = [
+                { username: 'eco_warrior', event_count: 8, total_plastics: 2450.5, total_products_recycled: 720 },
+                { username: 'green_heart', event_count: 6, total_plastics: 1850.2, total_products_recycled: 550 },
+                { username: 'planet_hero', event_count: 5, total_plastics: 1650.8, total_products_recycled: 480 },
+                { username: 'ocean_guardian', event_count: 5, total_plastics: 1520.3, total_products_recycled: 450 },
+                { username: 'earth_defender', event_count: 4, total_plastics: 1320.6, total_products_recycled: 380 }
+            ];
+            
+            createTopOrganizersTable(tableBody, topOrganizers);
+        }
+        
+        // Create a stat card
+        function createStatCard(container, title, value, iconClass) {
+            const col = document.createElement('div');
+            col.className = 'col-md-3 col-sm-6 mb-4';
+            container.appendChild(col);
+            
+            const card = document.createElement('div');
+            card.className = 'card h-100 border-left-primary';
+            col.appendChild(card);
+            
+            const cardBody = document.createElement('div');
+            cardBody.className = 'card-body';
+            card.appendChild(cardBody);
+            
+            const row = document.createElement('div');
+            row.className = 'row no-gutters align-items-center';
+            cardBody.appendChild(row);
+            
+            const colText = document.createElement('div');
+            colText.className = 'col mr-2';
+            row.appendChild(colText);
+            
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'text-xs font-weight-bold text-primary text-uppercase mb-1';
+            titleDiv.textContent = title;
+            colText.appendChild(titleDiv);
+            
+            const valueDiv = document.createElement('div');
+            valueDiv.className = 'h5 mb-0 font-weight-bold text-gray-800';
+            valueDiv.textContent = value.toLocaleString();
+            colText.appendChild(valueDiv);
+            
+            const colIcon = document.createElement('div');
+            colIcon.className = 'col-auto';
+            row.appendChild(colIcon);
+            
+            const icon = document.createElement('i');
+            icon.className = iconClass + ' fa-2x text-gray-300';
+            colIcon.appendChild(icon);
+        }
+        
+        // Create monthly events chart
+        function createMonthlyEventsChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const reversedData = [...data].reverse(); // Most recent first
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: reversedData.map(d => {
+                        const date = new Date(d.month + '-01');
+                        return date.toLocaleDateString('default', { month: 'short', year: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: 'Events',
+                        data: reversedData.map(d => d.event_count),
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create plastics collected chart
+        function createPlasticsCollectedChart(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            const reversedData = [...data].reverse(); // Most recent first
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: reversedData.map(d => {
+                        const date = new Date(d.month + '-01');
+                        return date.toLocaleDateString('default', { month: 'short', year: 'numeric' });
+                    }),
+                    datasets: [{
+                        label: 'Plastics Collected (kg)',
+                        data: reversedData.map(d => d.plastics_collected),
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Create top organizers table
+        function createTopOrganizersTable(container, data) {
+            const table = document.createElement('table');
+            table.className = 'table table-hover';
+            container.appendChild(table);
+            
+            // Table header
+            const thead = document.createElement('thead');
+            table.appendChild(thead);
+            
+            const headerRow = document.createElement('tr');
+            thead.appendChild(headerRow);
+            
+            const headers = ['Username', 'Events Organized', 'Plastics Collected (kg)', 'Products Recycled'];
+            headers.forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+            
+            // Table body
+            const tbody = document.createElement('tbody');
+            table.appendChild(tbody);
+            
+            data.forEach(organizer => {
+                const row = document.createElement('tr');
+                tbody.appendChild(row);
+                
+                const usernameCell = document.createElement('td');
+                usernameCell.textContent = organizer.username;
+                row.appendChild(usernameCell);
+                
+                const eventsCell = document.createElement('td');
+                eventsCell.textContent = organizer.event_count;
+                row.appendChild(eventsCell);
+                
+                const plasticsCell = document.createElement('td');
+                plasticsCell.textContent = organizer.total_plastics.toLocaleString();
+                row.appendChild(plasticsCell);
+                
+                const productsCell = document.createElement('td');
+                productsCell.textContent = organizer.total_products_recycled.toLocaleString();
+                row.appendChild(productsCell);
+            });
+        }
+    </script>
+    
+    <!-- Only load Power BI SDK if credentials are provided -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const embedUrl = "YOUR_POWER_BI_EMBED_URL";
+            
+            if (embedUrl !== "YOUR_POWER_BI_EMBED_URL") {
+                // Only load Power BI SDK if credentials are set
+                const script = document.createElement('script');
+                script.src = "https://microsoft.github.io/PowerBI-JavaScript/demo/node_modules/powerbi-client/dist/powerbi.min.js";
+                document.body.appendChild(script);
+            }
+        });
+    </script>
+</body>
+</html>
