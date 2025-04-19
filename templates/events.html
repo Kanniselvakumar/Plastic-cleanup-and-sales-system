@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - Plastic Cleanup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        :root {
+            --primary-color: #052d14;
+            --secondary-color: #087d04;
+            --background-color: #f5f7f8;
+            --hover-color: #0a4d07;
+            --primary1-color:#007bff;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem;
+        }
+
+        .navbar-brand {
+            color: var(--primary-color) !important;
+            font-weight: 600;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            color: var(--primary-color) !important;
+            position: relative;
+            padding: 0.5rem 1rem;
+            margin: 0 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .event-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .create-event-section {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .create-event-image {
+            width: 100%;
+            height: 440px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .btn-success {
+            background-color: var(--secondary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--hover-color);
+            transform: translateY(-2px);
+        }
+
+        .organizer-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .event-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .event-meta-item {
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .created-date {
+            font-size: 0.875rem;
+            color: #666;
+            margin-top: 1rem;
+        }
+        .nav-pills .nav-link {
+            color: var(--primary-color);
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin: 0 5px;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .completed-event-card {
+            background: #f8f9fa;
+            opacity: 0.9;
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-upcoming {
+            background-color: #007bff;
+            color: white;
+        }
+        .navbar {
+        background-color: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 1rem;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .navbar-brand {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 1.4rem;
+        transition: transform 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+        transform: scale(1.02);
+    }
+
+    .navbar-nav {
+        gap: 1rem;
+    }
+
+    .nav-link-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.6rem 1.2rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+
+    .home-btn {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .home-btn:hover {
+        background-color: #c8e6c9;
+        transform: translateY(-2px);
+    }
+
+    .register-btn {
+        background-color: var(--secondary-color);
+        color: white;
+    }
+
+    .register-btn:hover {
+        background-color: var(--hover-color);
+        transform: translateY(-2px);
+    }
+
+    .login-btn {
+        background-color: white;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+    }
+
+    .login-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 991.98px) {
+        .navbar-nav {
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .nav-link-btn {
+            display: flex;
+            justify-content: center;
+        }
+    }
+
+    /* Add smooth hover animation */
+    .nav-link-btn {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .nav-link-btn::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.3s ease;
+    }
+
+    .nav-link-btn:hover::after {
+        transform: scaleX(1);
+        transform-origin: left;
+    }
+
+    /* Add active state styles */
+    .nav-link-btn.active {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .navbar-brand {
+    display: flex;
+    align-items: center;  /* Align items vertically */
+    gap: 10px; 
+    
+    text-decoration: none;/* Adjust space between logo and text */
+}
+
+.navbar-brand img {
+    height: 40px; /* Adjust logo size */
+    width: auto;
+}
+
+.navbar-brand h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    color: rgb(9, 8, 8);
+    white-space: nowrap; /* Prevent wrapping */
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand">
+                <img src="{{ url_for('static', filename='images/logo6-removebg.png') }}" alt="Eco Logo">
+                <h1>Plastic Cleanup And Sales System</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link-btn home-btn" href="{{ url_for('home') }}">
+                            <i class="fas fa-home me-1"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-btn register-btn" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus me-1"></i>
+                            Register
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-btn login-btn" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="create-event-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ url_for('static', filename='images/eventsimg1.jpg') }}" alt="Plastic Reduction" class="create-event-image">
+                </div>
+                <div class="col-md-6">
+                    <h3>Join the Fight Against Plastic Pollution</h3>
+                    <p>Plastic pollution is one of the most pressing environmental challenges we face today. By organizing cleanup events, you can:</p>
+                    <ul>
+                        <li>Protect marine life and ecosystems</li>
+                        <li>Reduce pollution in our communities</li>
+                        <li>Raise awareness about waste management</li>
+                        <li>Create lasting positive change</li>
+                    </ul>
+                    <h4>Organizer Requirements:</h4>
+                    <ul>
+                        <li>Strong coordination and leadership skills</li>
+                        <li>Knowledge of proper waste segregation</li>
+                        <li>Ability to manage volunteers</li>
+                        <li>Commitment to environmental safety</li>
+                    </ul>
+                    <button class="btn btn-success mt-3" data-bs-toggle="modal" data-bs-target="#createEventModal">
+                        Create an Event
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container mt-4">
+            <div id="events-list" class="mt-4">
+                <h2 class="text-center mb-4">Current Events</h2>
+                
+                <div class="row">
+                    {% for event in events %}
+                    <div class="col-lg-6 mb-4">
+                        <div class="event-card">
+                            <h4>{{ event.event_name }}</h4>
+                            {% if event.photo_path %}
+                                <img src="{{ url_for('static', filename='images/' + event.photo_path) }}" 
+                                     alt="{{ event.event_name }}" 
+                                     class="event-image"
+                                     onerror="this.onerror=null; this.src='/api/placeholder/400/300'; console.log('Image failed to load, using placeholder');">
+                            {% else %}
+                                <img src="/api/placeholder/400/300" 
+                                     alt="{{ event.event_name }}" 
+                                     class="event-image">
+                            {% endif %}
+                        
+                        <div class="organizer-info">
+                            <h5>Organizer Information</h5>
+                            <p><strong>Organized by:</strong> {{ event.organizer_name }}</p>
+                        </div>
+
+                        <div class="event-meta">
+                            <div class="event-meta-item">
+                                <strong>Date:</strong> {{ event.event_date.strftime('%B %d, %Y') }}
+                            </div>
+                            <div class="event-meta-item">
+                                <strong>Time:</strong> {{ event.event_time.strftime('%I:%M %p') }}
+                            </div>
+                            <div class="event-meta-item">
+                                <strong>Volunteers Needed:</strong> {{ event.num_volunteers }}
+                            </div>
+                            <div class="event-meta-item">
+                                <strong>Salary:</strong> ${{ event.salary_per_volunteer }} per volunteer
+                            </div>
+                        </div>
+
+                        <p><strong>Location:</strong> {{ event.latitude }}, {{ event.longitude }}</p>
+                        
+                        {% if event.supplies %}
+                        <p><strong>Supplies:</strong> {{ event.supplies }}</p>
+                        {% endif %}
+
+                        <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#joinEventModal" 
+                                data-event-id="{{ event.id }}">
+                            Join Event
+                        </button>
+
+                        <div class="created-date">
+                            Created: {{ event.created_at.strftime('%B %d, %Y at %I:%M %p') }}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div class="modal fade" id="createEventModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create an Event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{{ url_for('static', filename='images/eventsimg3.jpg') }}" alt="Plastic Pollution Impact" class="img-fluid rounded mb-3">
+                    <h5>Why Organize a Cleanup Event?</h5>
+                    <p>Reducing plastic waste is crucial for protecting marine life, reducing pollution, and conserving natural resources.</p>
+                    <p>As an organizer, you will:</p>
+                    <ul>
+                        <li>Lead volunteer teams</li>
+                        <li>Coordinate cleanup logistics</li>
+                        <li>Ensure proper waste disposal</li>
+                        <li>Track and report results</li>
+                    </ul>
+                    <p>Select your role as <strong>organiser</strong> to begin creating an event.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Join Event Modal -->
+    <div class="modal fade" id="joinEventModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Join Event as Volunteer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{{ url_for('static', filename='images/eventsimg2.jpg') }}"alt="Volunteer Work" class="img-fluid rounded mb-3">
+                    <p>You are about to join this event as a <strong>Volunteer</strong>. As a volunteer, you will:</p>
+                    <ul>
+                        <li>Participate in organized cleanup activities</li>
+                        <li>Follow safety guidelines</li>
+                        <li>Work with team members</li>
+                        <li>Help document the cleanup process</li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="{{ url_for('register') }}" class="btn btn-primary">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Card animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.event-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+
+        // Handle event joining
+        let joinEventModal = document.getElementById('joinEventModal')
+        joinEventModal.addEventListener('show.bs.modal', function (event) {
+            let button = event.relatedTarget
+            let eventId = button.getAttribute('data-event-id')
+            let confirmButton = joinEventModal.querySelector('.modal-footer .btn-primary')
+            confirmButton.href = "{{ url_for('register') }}?event_id=" + eventId
+        })
+    </script>
+</body>
+</html>

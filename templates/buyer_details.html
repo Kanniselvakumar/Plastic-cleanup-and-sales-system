@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buyer Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .buyer-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        .buyer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .organizer-header {
+            background: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .stats-badge {
+            background: #f8f9fa;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin-right: 10px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+        .product-list {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="organizerHeader" class="organizer-header text-center">
+            <!-- Organizer name will be inserted here -->
+        </div>
+        
+        <div id="buyerList">
+            <!-- Buyer cards will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        async function loadBuyerDetails() {
+            try {
+                const response = await fetch('/buyer_details');
+                const data = await response.json();
+                
+                if (response.status === 401) {
+                    document.getElementById('buyerList').innerHTML = `
+                        <div class="alert alert-warning">
+                            Please log in as an organizer to view buyer details.
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Update organizer header
+                document.getElementById('organizerHeader').innerHTML = `
+                    <h2>${data.organizer_name}'s Buyers</h2>
+                `;
+                
+                // Update buyer list
+                const buyerListHTML = data.buyers.map(buyer => `
+                    <div class="buyer-card">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h4>${buyer.username}</h4>
+                                <p class="mb-2">
+                                    <i class="bi bi-envelope"></i> ${buyer.email}<br>
+                                    <i class="bi bi-phone"></i> ${buyer.phone_number || 'N/A'}
+                                </p>
+                            </div>
+                            <div class="text-end">
+                                <span class="stats-badge">
+                                    <strong>${buyer.total_products}</strong> Products
+                                </span>
+                                <span class="stats-badge">
+                                    <strong>₹${buyer.total_amount}</strong> Total
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="product-list">
+                            <strong>Purchased Products:</strong><br>
+                            ${buyer.purchased_products ? buyer.purchased_products.split(',').join(', ') : 'No products'}
+                        </div>
+                        
+                        <div class="text-muted mt-2">
+                            Last Purchase: ${new Date(buyer.last_purchase_date).toLocaleDateString()}
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('buyerList').innerHTML = 
+                    data.buyers.length ? buyerListHTML : 
+                    '<div class="alert alert-info">No buyers found for your products yet.</div>';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('buyerList').innerHTML = `
+                    <div class="alert alert-danger">
+                        Failed to load buyer details. Please try again later.
+                    </div>
+                `;
+            }
+        }
+
+        // Load buyer details when page loads
+        document.addEventListener('DOMContentLoaded', loadBuyerDetails);
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Events History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #052d14;
+            --secondary-color: #087d04;
+            --accent-color: #4adb34;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 100px;
+        }
+
+        nav {
+            background: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            color: white !important;
+            transition: all 0.3s ease;
+            padding: 0.7rem 1.2rem !important;
+            border-radius: 5px;
+            margin: 0 0.5rem;
+        }
+        .nav-link {
+            padding: 8px 15px !important;
+            margin: 0;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: rgba(128, 128, 128, 0.2);
+            border-radius: 4px;
+        }
+
+        .container {
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border: none;
+            margin-top: 20px;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .table th {
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            padding: 1.2rem 1rem;
+            border: none;
+        }
+
+        .event-photo {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .payment-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .payment-pending {
+            background-color: #ffeeba;
+            color: #856404;
+        }
+
+        .payment-paid {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .organizer-info {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .metrics-badge {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            margin: 0.25rem;
+            display: inline-block;
+        }
+
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        .feedback-btn {
+            background-color: #4adb34;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-btn:hover {
+            background-color: #087d04;
+            transform: translateY(-2px);
+        }
+
+        .modal-content {
+            border-radius: 15px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #052d14, #087d04);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-footer {
+            border-radius: 0 0 15px 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Plastic Cleanup And Sales System</a>
+            <div class="navbar-nav">
+                <a class="nav-link" href="{{ url_for('volunteer') }}">Dashboard</a>
+                <a class="nav-link active" href="{{ url_for('volunteer_history') }}">History</a>
+                <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text text-white">
+                    <i class="fas fa-user me-2"></i>
+                    Welcome, {{ username }}
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h3 class="mb-4">
+            <i class="fas fa-history me-2"></i>
+            Completed Events History
+        </h3>
+
+        {% if completed_events %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>Date & Time</th>
+                            <th>Work Details</th>
+                            <th>Payment Status</th>
+                            <th>Organizer Details</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in completed_events %}
+                            <tr>
+                                <td>
+                                    {% if event.photo_path %}
+                                        <img src="{{ url_for('static', filename='uploads/' + event.photo_path) }}" 
+                                             alt="Event Photo" class="event-photo mb-2">
+                                    {% endif %}
+                                    <div class="fw-bold">{{ event.event_name }}</div>
+                                </td>
+                                <td>
+                                    <div><i class="far fa-calendar me-2"></i>{{ event.event_date }}</div>
+                                    <div><i class="far fa-clock me-2"></i>{{ event.event_time }}</div>
+                                </td>
+                                <td>
+                                    <div>Hours Worked: {{ event.hours_worked or 'Not recorded' }}</div>
+                                    <div>Total Payment: ₹{{ event.salary_per_volunteer }}</div>
+                                </td>
+                                <td>
+                                    <div class="payment-badge {{ 'payment-paid' if event.payment_status == 'Paid' else 'payment-pending' }}">
+                                        <i class="fas {{ 'fa-check-circle' if event.payment_status == 'Paid' else 'fa-clock' }} me-2"></i>
+                                        {{ event.payment_status or 'Pending' }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="organizer-info">
+                                        <div><i class="fas fa-user-tie me-2"></i>{{ event.organiser_name }}</div>
+                                        <div><i class="fas fa-envelope me-2"></i>{{ event.organiser_email }}</div>
+                                        <div><i class="fas fa-phone me-2"></i>{{ event.organiser_mobile }}</div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="feedback-btn" onclick="openFeedbackModal('{{ event.id }}')">
+                                        <i class="fas fa-comment me-2"></i>Give Feedback
+                                    </button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                No completed events found in your history.
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal fade" id="feedbackModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Provide Feedback</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="feedbackForm">
+                        <input type="hidden" id="eventId" name="eventId">
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Rating</label>
+                            <select class="form-select" id="rating" name="rating" required>
+                                <option value="">Select rating</option>
+                                <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                                <option value="4">⭐⭐⭐⭐ Very Good</option>
+                                <option value="3">⭐⭐⭐ Good</option>
+                                <option value="2">⭐⭐ Fair</option>
+                                <option value="1">⭐ Poor</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedback" class="form-label">Your Feedback</label>
+                            <textarea class="form-control" id="feedback" name="feedback" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="submitFeedback()">Submit Feedback</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p class="mb-0">© 2024 Plastic Cleanup Initiative</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openFeedbackModal(eventId) {
+            document.getElementById('eventId').value = eventId;
+            new bootstrap.Modal(document.getElementById('feedbackModal')).show();
+        }
+
+        function submitFeedback() {
+            const formData = new FormData(document.getElementById('feedbackForm'));
+            
+            fetch('/submit-feedback', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Feedback submitted successfully!');
+                    bootstrap.Modal.getInstance(document.getElementById('feedbackModal')).hide();
+                } else {
+                    alert('Error submitting feedback. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error submitting feedback. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #052d14;
+            --secondary-color: #087d04;
+            --accent-color: #4adb34;
+            --success-color: #052d14;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+            
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 100px;
+        }
+
+        nav {
+            background: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            color: white !important;
+            transition: all 0.3s ease;
+            padding: 0.7rem 1.2rem !important;
+            border-radius: 5px;
+            margin: 0 0.5rem;
+        }
+        .nav-link {
+            padding: 8px 15px !important;
+            margin: 0;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: rgba(128, 128, 128, 0.2);
+            border-radius: 4px;
+        }
+
+        .container {
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-section {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 2rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+    }
+    .profile-content {
+        flex: 1;
+    }
+        .profile-info {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(252, 249, 249, 0.1);
+        }
+
+        .profile-info:last-child {
+            border-bottom: none;
+        }
+
+        .profile-info label {
+            font-weight: 500;
+            margin-right: 1rem;
+            color: rgb(251, 251, 251);
+        }
+
+        .profile-info i {
+            width: 25px;
+            color: var(--accent-color);
+        }
+
+        .table {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border: none;
+            margin-top: 20px;
+        }
+
+        .table thead {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .table th {
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            padding: 1.2rem 1rem;
+            border: none;
+        }
+
+        .table td {
+            padding: 1.2rem 1rem;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+        }
+        .location-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .location-time-cell {
+            min-width: 200px;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            pointer-events:auto;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: #0dfb05;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .join-btn.joined {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+            opacity: 0.8;
+            cursor: not-allowed;
+        }
+
+        .footer {
+            background: var(--primary-color) !important;
+            margin-top: auto;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .btn.joined {
+            background-color: var(--secondary-color) !important;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .event-details {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .event-details p {
+            margin-bottom: 8px;
+        }
+
+        .event-details strong {
+            color: var(--primary-color);
+        }
+
+        #joinSuccessModal .fa-check-circle {
+            color: var(--success-color);
+        }
+
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 3px 9px rgba(0,0,0,.5);
+
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #dee2e6;
+            padding: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .btn-join {
+            padding: 8px 20px;
+            font-weight: 500;
+            border-radius: 20px;
+            border: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .btn-join:not(:disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-join.disabled {
+            background: #6c757d;
+            opacity: 0.7;
+        }
+        
+        .volunteers-needed {
+            font-size: 0.9rem;
+            color: #666868;
+            margin-top: 5px;
+        }
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 0.4em 0.6em;
+            margin-left: 0.5rem;
+        }
+        
+        .role-badge {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        .event-photo {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .event-photo:hover {
+            transform: scale(1.05);
+        }
+        
+        .supplies-cell {
+            min-width: 180px;
+        }
+
+        .supplies-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .supplies-list li {
+            background: #e9ecef;
+            color: var(--primary-color);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .supplies-list li i {
+            margin-right: 5px;
+            color: var(--secondary-color);
+        }
+        
+        .salary-badge {
+            background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .event-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.8rem;
+        }
+
+        
+        .table td {
+            vertical-align: middle;
+        }
+        
+        .photo-cell {
+            width: 130px;
+            padding: 0.8rem !important;
+        }
+        .location-badge {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .time-info {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+        .details-cell {
+            min-width: 220px;
+        }
+        .organizer-cell {
+            min-width: 160px;
+        }
+
+        .organizer-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+
+        .volunteers-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        .modal-dialog {
+            position: relative;
+            width: auto;
+            margin: 1.75rem auto;
+            max-width: 500px;
+        }
+        .modal .btn {
+            pointer-events: auto !important;
+            cursor: pointer !important;
+        }
+
+        .modal-header .btn-close {
+            padding: 1rem;
+            opacity: .75;
+            cursor: pointer;
+        }
+        .success-icon {
+            color: var(--success-color);
+            font-size: 48px;
+            margin-bottom: 1rem;
+        }
+        .badges-section {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    flex-wrap: wrap;
+}
+
+  .badges-container {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    min-width: 250px;
+}
+
+.badges-title {
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    color: white;
+}
+    .badge-card {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        transition: transform 0.2s;
+    }
+    .badge-name {
+    color: white;
+    font-size: 1rem;
+    flex-grow: 1;
+}
+    .badge-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+.badge-count {
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-left: auto;
+    min-width: 35px;
+    text-align: center;
+}
+    .badge-card:hover {
+        transform: translateY(5px);
+    }
+
+    .bronze {
+    background: linear-gradient(145deg, #cd7f32, #b87333);
+}
+
+.gold {
+    background: linear-gradient(145deg, #ffd700, #daa520);
+}
+
+.diamond {
+    background: linear-gradient(145deg, #b9f2ff, #89cff0);
+}
+
+.platinum {
+    background: linear-gradient(145deg, #e5e4e2, #c0c0c0);
+}
+
+    .badge-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+    .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    .badge-icon:hover {
+        transform: scale(1.1);
+    }
+.badge-icon i {
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .badge-info {
+        color: white;
+    }
+
+    .badge-info h5 {
+        font-size: 1.1rem;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .badge-info .event-name {
+        font-size: 0.9rem;
+        margin: 0.2rem 0;
+        opacity: 0.9;
+    }
+
+    .badge-info .award-date {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+    .badge-tooltip {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 4px;
+        font-size: 0.875rem;
+        white-space: nowrap;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+        margin-bottom: 8px;
+    }
+
+.badge-icon:hover .badge-tooltip {
+    visibility: visible;
+    opacity: 1;
+}   
+@media (max-width: 768px) {
+        .profile-section {
+            grid-template-columns: 1fr;
+        }
+        
+        .badges-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+    .navbar-brand {
+    display: flex;
+    align-items: center;  /* Align items vertically */
+    gap: 10px; 
+    
+    text-decoration: none;/* Adjust space between logo and text */
+}
+
+.navbar-brand img {
+    height: 40px; /* Adjust logo size */
+    width: auto;
+}
+
+.navbar-brand h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    padding: 0;
+    color: white;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand">
+                <img src="{{ url_for('static', filename='images/logo9-removebg.png') }}" alt="Eco Logo">
+                <h1>Plastic Cleanup And Sales System</h1>
+            </a>
+            <div class="navbar-nav">
+                <a class="nav-link active" href="{{ url_for('volunteer') }}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a class="nav-link" href="{{ url_for('volunteer_history') }}">
+                    <i class="fas fa-history"></i> History</a>
+                <a class="nav-link" href="{{ url_for('sales') }}">
+                    <i class="fas fa-shopping-cart"></i> Buy
+                </a>
+                <a class="nav-link" href="{{ url_for('logout') }}">
+                    <i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text text-white">
+                    <i class="fas fa-user me-2"></i>
+                    Welcome, {{ username }}
+                </span>
+            </div>
+        </div>
+    </nav>
+    <!-- Profile Section -->
+    <div class="container">
+        <div class="profile-section">
+            <div class="profile-content">
+                <div class="role-badge">
+                    <i class="fas fa-user-shield me-2"></i>{{ session.get('role', '').title() }}
+                </div>
+                <h3 class="mb-4">Profile Information</h3>
+                <div class="profile-info">
+                    <i class="fas fa-user"></i>
+                    <label>Name:</label>
+                    <span>{{ username }}</span>
+                </div>
+                <div class="profile-info">
+                    <i class="fas fa-envelope"></i>
+                    <label>Email:</label>
+                    <span>{{ email }}</span>
+                </div>
+                <div class="profile-info">
+                    <i class="fas fa-phone"></i>
+                    <label>Phone:</label>
+                    <span>{{ phone }}</span>
+                </div>
+            </div>
+            
+            <div class="badges-container">
+                <h4 class="badges-title">
+                    <i class="fas fa-award me-2"></i>Achievement Badges
+                </h4>
+                
+                <div class="badge-row">
+                    <div class="badge-icon bronze">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <span class="badge-name">Bronze</span>
+                    <span class="badge-count">{{ badges|selectattr('badge_type', 'equalto', 'bronze')|list|length }}x</span>
+                </div>
+                
+                <div class="badge-row">
+                    <div class="badge-icon gold">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <span class="badge-name">Gold</span>
+                    <span class="badge-count">{{ badges|selectattr('badge_type', 'equalto', 'gold')|list|length }}x</span>
+                </div>
+                
+                <div class="badge-row">
+                    <div class="badge-icon platinum">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <span class="badge-name">Platinum</span>
+                    <span class="badge-count">{{ badges|selectattr('badge_type', 'equalto', 'platinum')|list|length }}x</span>
+                </div>
+
+
+                <div class="badge-row">
+                    <div class="badge-icon diamond">
+                        <i class="fas fa-gem"></i>
+                    </div>
+                    <span class="badge-name">Diamond</span>
+                    <span class="badge-count">{{ badges|selectattr('badge_type', 'equalto', 'diamond')|list|length }}x</span>
+                </div>
+                
+                
+            </div>
+        </div>
+
+        <!-- Events Section -->
+        <div class="mt-4">
+            <h3 class="mb-4">Available Events</h3>
+            {% if events %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Event Details</th>
+                                <th> Location & Time</th>
+                                <th>  Supplies</th>
+                                <th>Organization</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                                <tr>
+                                    <td class="photo-cell">
+                                        {% if event.photo_path %}
+                                            <img src="{{ url_for('static', filename='uploads/' + event.photo_path) }}" alt="Event Photo" class="event-photo">
+                                        {% else %}
+                                            <img src="/api/placeholder/120/120" alt="No Photo" class="event-pho to">
+                                        {% endif %}
+                                    </td>
+                                    <td class="details-cell">
+                                        <div class="event-name">{{ event.event_name }}</div>
+                                        <div class="salary-badge">
+                                            <i class="fa-solid fa-indian-rupee-sign me-1"></i>
+                                            {{ event.salary_per_volunteer }} per volunteer
+                                        </div>
+                                    </td>
+                                    <td class="location-time-cell">
+                                        <div class="location-badge">
+                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                            {{ event.location }}
+                                        </div>
+                                        <div class="time-info">
+                                            <i class="far fa-calendar me-2"></i>{{ event.event_date }}
+                                        </div>
+                                        <div class="time-info">
+                                            <i class="far fa-clock me-2"></i>{{ event.event_time }}
+                                        </div>
+                                    </td>
+                                    <td class="supplies-cell">
+                                        <ul class="supplies-list">
+                                            {% for supply in event.supplies.split(',') %}
+                                                <li>
+                                                    
+                                                    {{ supply }}
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    </td>
+                                    <td class="organizer-cell">
+                                        <div class="organizer-name">
+                                            <i class="fas fa-user-tie"></i>
+                                            {{ event.organiser_name }}
+                                        </div>
+                                        <div class="volunteers-badge">
+                                            <i class="fas fa-users"></i>
+                                            {{ event.joined_volunteers|default(0) }}/{{ event.num_volunteers }}
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button type="button" 
+                                                class="btn btn-primary btn-join" 
+                                                data-event-id="{{ event.id }}"
+                                                data-max-volunteers="{{ event.num_volunteers }}"
+                                                data-joined-volunteers="{{ event.joined_volunteers|default(0) }}"
+                                                onclick="joinEvent(this, '{{ event.id }}')"
+                                                {% if event.is_joined or event.joined_volunteers >= event.num_volunteers %}
+                                                    disabled
+                                                {% endif %}>
+                                            {% if event.is_joined %}
+                                                <i class="fas fa-check me-1"></i>Joined
+                                            {% elif event.joined_volunteers >= event.num_volunteers %}
+                                                <i class="fas fa-ban me-1"></i>Full
+                                            {% else %}
+                                                <i class="fas fa-plus me-1"></i>Join
+                                            {% endif %}
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    No upcoming events found. Stay tuned!
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <!-- Add these modals before the closing body tag -->
+    <div class="modal" id="joinConfirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Join Event</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('joinConfirmModal')" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to join this event? You will be expected to participate as scheduled.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('joinConfirmModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="confirmJoin()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="joinSuccessModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-success">Success!</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('joinSuccessModal')" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="fas fa-check-circle success-icon mb-3" style="font-size: 48px;"></i>
+                    <h5>Successfully Joined!</h5>
+                    <p>You have successfully joined the event. We look forward to your participation!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer text-white text-center py-3 mt-5">
+        <p class="mb-0">© 2024 Plastic Cleanup Initiative</p>
+    </footer>
+
+    <!-- Keep the original JavaScript -->
+    <script>
+        let currentEventId = null;
+        let currentButton = null;
+
+        window.joinEvent = function(button, eventId) {
+            if (button.disabled) return;
+            currentEventId = eventId;
+            currentButton = button;
+            document.getElementById('joinConfirmModal').classList.add('show');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        };
+
+        window.confirmJoin = function() {
+    // Show success message immediately
+    closeModal('joinConfirmModal');
+    document.getElementById('joinSuccessModal').classList.add('show');
+
+    // Close success message after 2 seconds
+    setTimeout(() => {
+        closeModal('joinSuccessModal');
+    }, 2000);
+
+    // Handle the form submission separately
+    const formData = new FormData();
+    formData.append('join_event', '1');
+    formData.append('event_id', currentEventId);
+
+    fetch('/volunteer', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && currentButton) {
+            currentButton.innerHTML = '<i class="fas fa-check me-1"></i>Joined';
+            currentButton.disabled = true;
+            currentButton.classList.add('joined');
+
+            const volunteersCell = currentButton.closest('tr').querySelector('.volunteers-badge');
+            if (volunteersCell) {
+                const [current, total] = volunteersCell.textContent.trim().split('/');
+                const newCount = parseInt(current) + 1;
+                volunteersCell.innerHTML = `<i class="fas fa-users"></i>${newCount}/${total}`;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('Error joining event. Please try again.', 'danger');
+    });
+};
+async function getLocationName(lat, lng, cell) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                const data = await response.json();
+                const location = data.display_name || 'Location not found';
+                cell.textContent = location.length > 30 ? location.substring(0, 30) + '...' : location;
+                cell.title = location;
+            } catch (error) {
+                console.error('Error fetching location:', error);
+                cell.textContent = 'Error loading location';
+            }
+        }
+    </script>
+</body>
+</html>

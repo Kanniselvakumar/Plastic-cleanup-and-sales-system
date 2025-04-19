@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organiser Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #052d14;
+            --secondary-color: #087d04;
+            --accent-color: #4adb34;
+            --background-color: #ecf0f1;
+            --card-background: #ffffff;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--primary-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 100px;
+        }
+
+        nav {
+            background: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        nav a {
+            color: white !important;
+            transition: all 0.3s ease;
+            padding: 0.7rem 1.2rem !important;
+            border-radius: 5px;
+            margin: 0 0.5rem;
+        }
+
+        .container {
+            background: var(--card-background);
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .event-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .event-card:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .status-badge {
+            background: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .feedback-container {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feedback-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .feedback-rating {
+            color: #ffc107;
+        }
+
+        .feedback-text {
+            color: #495057;
+            line-height: 1.6;
+            margin-top: 0.5rem;
+        }
+
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .no-feedback {
+            color: #6c757d;
+            font-style: italic;
+            text-align: center;
+            padding: 1rem;
+        }
+        .volunteers-list {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .volunteer-name {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.2rem 0.8rem;
+            border-radius: 15px;
+            margin: 0.2rem;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Plastic Cleanup And Sales System</a>
+            <div class="navbar-nav ms-auto">
+                <span class="navbar-text text-white">
+                    <i class="fas fa-user me-2"></i>
+                    {{ username }}
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="mb-4"><i class="fas fa-calendar-check me-2"></i>Completed Events & Feedback</h2>
+        
+        {% if events %}
+            {% for event in events %}
+                <div class="event-card">
+                    <div class="event-header">
+                        <div>
+                            <h3>{{ event.event_name }}</h3>
+                            <p class="mb-0"><i class="far fa-calendar me-2"></i>{{ event.event_date }}</p>
+                            {% if event.volunteer_names %}
+                                <div class="volunteers-list">
+                                    <p class="mb-1"><i class="fas fa-users me-2"></i>Volunteers:</p>
+                                    {% for volunteer in event.volunteer_names.split(',') %}
+                                        <span class="volunteer-name">{{ volunteer.strip() }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="mb-0"><i class="fas fa-users me-2"></i>No volunteers joined</p>
+                            {% endif %}
+                        </div>
+                        <span class="status-badge">{{ event.status }}</span>
+                    </div>
+
+                    <div class="feedback-container">
+                        <h4><i class="fas fa-comments me-2"></i>Event Feedback</h4>
+                        {% set found_feedback = namespace(value=false) %}
+                        {% for feedback in feedbacks %}
+                            {% if feedback.event_name == event.event_name %}
+                                {% set found_feedback.value = true %}
+                                <div class="feedback-item">
+                                    <div class="feedback-header">
+                                        <p class="mb-0"><i class="fas fa-user me-2"></i>{{ feedback.volunteer_name }}</p>
+                                        <div>
+                                            <div class="feedback-rating">
+                                                {% for _ in range(feedback.rating) %}★{% endfor %}
+                                                {% for _ in range(5 - feedback.rating) %}☆{% endfor %}
+                                            </div>
+                                            <small class="text-muted"><i class="far fa-calendar me-2"></i>{{ feedback.submission_date.strftime('%Y-%m-%d') }}</small>
+                                        </div>
+                                    </div>
+                                    <p class="feedback-text">{{ feedback.feedback_text }}</p>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not found_feedback.value %}
+                            <div class="no-feedback">
+                                <i class="fas fa-info-circle me-2"></i>No feedback received for this event yet.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info text-center" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                No completed events found.
+            </div>
+        {% endif %}
+    </div>
+
+    <footer class="footer">
+        <p class="mb-0">© 2024 Plastic Cleanup Initiative</p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const completedEventsList = document.getElementById('completed-events-list');
+            const updateMetrics = (eventId, metrics) => {
+                fetch(`/update-metrics/${eventId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(metrics)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            };
+        });
+    </script>
+
+</body>
+</html>
