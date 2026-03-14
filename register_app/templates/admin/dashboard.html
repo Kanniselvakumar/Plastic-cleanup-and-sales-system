@@ -1,0 +1,163 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block additional_styles %}
+<style>
+    body {
+        background: #f8f9fa; /* Light theme background */
+        color: #212529;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: auto;
+        padding: 2rem;
+    }
+
+    /* Grid Layout for Statistics */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Stat Cards */
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+        border-left: 5px solid #08901e;
+    }
+
+    .stat-card i {
+        font-size: 2.5rem;
+        color: #177639;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.3rem;
+        color: #343a40;
+    }
+
+    .stat-card p {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #37a508;
+        text-shadow: 1px 1px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 123, 255, 0.2);
+    }
+
+    /* Recent Activities - Timeline Style */
+    .recent-activities {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .activity-timeline {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: relative;
+    }
+
+    .activity-item {
+        position: relative;
+        padding: 1rem 1rem 1rem 2.5rem;
+        margin-bottom: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 5px solid #177639;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: 0.8rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        background: #37a508;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+    }
+
+    .activity-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f1012;
+    }
+
+    .activity-date {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2 class="text-center">Admin Dashboard Overview</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <i class="fas fa-users"></i>
+            <h3>Organisers</h3>
+            <p>{{ stats.organiser_count }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-user-check"></i>
+            <h3>Volunteers</h3>
+            <p>{{ stats.volunteer_count }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-calendar-check"></i>
+            <h3>Total Events</h3>
+            <p>{{ stats.event_count }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-flag-checkered"></i>
+            <h3>Completed Events</h3>
+            <p>{{ stats.completed_events }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-hand-holding-usd"></i>
+            <h3>Total Donations</h3>
+            <p>₹{{ "%.2f"|format(stats.total_donations) }}</p>
+        </div>
+        <div class="stat-card">
+            <i class="fas fa-recycle"></i>
+            <h3>Plastics Collected</h3>
+            <p>{{ "%.2f"|format(stats.total_plastics_collected) }} kg</p>
+        </div>
+    </div>
+
+    <div class="recent-activities">
+        <h3 class="text-center">Recent Activities</h3>
+        <ul class="activity-timeline">
+            {% for activity in recent_activities %}
+            <li class="activity-item">
+                <div class="activity-title">{{ activity.type }}: {{ activity.name }}</div>
+                <div class="activity-date">{{ activity.date.strftime('%Y-%m-%d %H:%M') }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+# database
+database.sql
+
+# python cache
+__pycache__/
+*.pyc
+
+# virtual environments
+venv/
+.venv/
+env/
+venvsource/
+
+# environment variables
+.env
+
+# uploads (optional)
+uploads/
+
+# logs
+*.log
+
+# vscode settings
+.vscode/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# ML model files
+*.pkl
+*.joblib
+*.h5
+*.model
+*json
+
+# JSON model
+xgboost_model.json
+
+# build folders
+build/
+dist/
+
+# Flask instance
+instance/
+
+# temp files
+*.tmp
+*.temp
+
+register_app/static/videos/
+*.mp4
+*.mov

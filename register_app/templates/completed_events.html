@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Completed Events</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #052d14;
+            --secondary: #087d04;
+            --accent: #4adb34;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            background: var(--primary);
+        }
+
+        .navbar-nav .nav-link {
+            color: white !important;
+        }
+        .navbar-nav {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.nav-link {
+    padding: 8px 15px !important;
+    margin: 0;
+    transition: background-color 0.3s;
+}
+
+.nav-link:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+    border-radius: 4px;
+}
+
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stats-card h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .stats-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .badge-completed {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        .metrics-form {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .volunteers-table {
+            margin-top: 15px;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .export-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        .status-paid {
+            color: #28a745;
+        }
+
+        .status-pending {
+            color: #ffc107;
+        }
+        /* Add to your existing CSS */
+.notification {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    z-index: 1000;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.notification.success {
+    background-color: #28a745;
+}
+
+.notification.error {
+    background-color: #dc3545;
+}
+
+/* Add animation styles for the stats cards */
+.stats-value {
+    transition: all 0.3s ease-out;
+}
+
+/* Add loading state styles */
+button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Add hover effect for better UX */
+.stats-card {
+    transition: transform 0.2s ease-out;
+}
+
+.stats-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.sell-product-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        
+        .sell-product-form {
+    display: none;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+        /* Add hover effect */
+        .sell-product-btn:hover {
+            background-color: #218838;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .success-icon {
+            color: #28a745;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .notification-modal p {
+            margin-bottom: 15px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .notification-modal button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .notification-modal button:hover {
+            background: #218838;
+        }
+        .notification-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .metrics-notification-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .success-icon {
+            color: #28a745;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .form-select {
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-select:focus {
+    border-color: #087d04;
+    box-shadow: 0 0 0 0.2rem rgba(8, 125, 4, 0.25);
+    outline: 0;
+}
+
+.form-control:focus {
+    border-color: #087d04;
+    box-shadow: 0 0 0 0.2rem rgba(8, 125, 4, 0.25);
+}
+
+.btn-success {
+    background-color: #087d04;
+    border-color: #087d04;
+}
+
+.btn-success:hover {
+    background-color: #052d14;
+    border-color: #052d14;
+}
+
+/* Animation for showing/hiding fields */
+#wholesalePlasticsField, #recycledProductsField {
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#wholesalePlasticsField.active, #recycledProductsField.active {
+    opacity: 1;
+    max-height: 100px;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <div class="navbar-nav">
+                <a class="nav-link" href="/organiser"><i class="fas fa-arrow-left me-2"></i>Back to Dashboard</a>
+                <!--<a class="nav-link" href="/completed-events"><i class="fas fa-check-circle me-2"></i>Completed Events</a>-->
+                <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="filter-section d-flex justify-content-between align-items-center">
+            <div>
+                <h4>Completed Events</h4>
+            </div>
+            <div>
+                <select id="monthFilter" class="form-select me-2 d-inline-block w-auto">
+                    <option value="">All Months</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                </select>
+                <button class="export-btn" onclick="exportData()">
+                    <i class="fas fa-download me-2"></i>Export Data
+                </button>
+            </div>
+        </div>
+        
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="notification-modal" id="successModal">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h4>Product Uploaded Successfully!</h4>
+        <p>Your product has been uploaded and is pending admin approval. You will be notified once it's approved.</p>
+        <button onclick="closeNotification()">OK</button>
+        </div>
+        
+        <div class="modal-overlay" id="metricsModalOverlay"></div>
+        <div class="metrics-notification-modal" id="metricsSuccessModal">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h4>Metrics Updated Successfully!</h4>
+            <p>The event metrics have been updated in the system.</p>
+            <button onclick="closeMetricsNotification()">OK</button>
+        </div>
+
+        {% for event in completed_events %}
+        <div class="event-card">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h4>{{ event.event_name }}</h4>
+                    <p class="text-muted">{{ event.event_date }} at {{ event.event_time }}</p>
+                </div>
+                <span class="badge-completed">Completed</span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3><i class="fas fa-recycle me-2"></i>Total Plastics Collected</h3>
+                        <div class="stats-value" data-total-plastics>{{ total_plastics }} kg</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3><i class="fas fa-box me-2"></i>Products Recycled</h3>
+                        <div class="stats-value" data-total-products>{{ event.products_recycled  }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3><i class="fas fa-money-bill me-2"></i>Total Payments</h3>
+                        <div class="stats-value" data-total-payments>₹{{ total_payments }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-form">
+                <h5>Event Metrics</h5>
+                <form onsubmit="updateMetrics(event, '{{ event.id }}')" class="row g-3">
+                    <div class="col-12">
+                        <label class="form-label">Products Recycled</label>
+                        <input type="number" 
+                               class="form-control" 
+                               name="products_recycled" 
+                               value="{{ event.products_recycled }}" 
+                               min="0"
+                               required>
+                    </div>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            Update Products Recycled
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="volunteers-table mt-4">
+                <h5>Volunteer Payments</h5>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Volunteer Name</th>
+                                <th>Hours Worked</th>
+                                <th>Plastics Collected (kg)</th>
+                                <th>Payment Due</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for volunteer in event.volunteers %}
+                            <tr>
+                                <td>{{ volunteer.username }}</td>
+                                <td>
+                                    <input type="number" class="form-control form-control-sm d-inline-block w-auto" 
+                                           value="{{ volunteer.hours_worked }}"
+                                           onchange="updateHours('{{ event.id }}', '{{ volunteer.id }}', this.value)">
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control form-control-sm d-inline-block w-auto" 
+                                           value="{{ volunteer.plastics_collected }}"
+                                           step="0.1"
+                                           onchange="updatePlastics('{{ event.id }}', '{{ volunteer.id }}', this.value)">
+                                </td>
+                                <td>₹{{ event.salary_per_volunteer }}</td>
+                                <td>
+                                    <div class="payment-section" data-event-id="{{ event.id }}" data-volunteer-id="{{ volunteer.id }}" data-amount="{{ event.salary_per_volunteer }}">
+                                        {% if volunteer.payment_status == 'Paid' %}
+                                            <span class="payment-status text-success"><i class="fas fa-check-circle"></i> Paid</span>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-success payment-btn">
+                                                Pay ₹{{ event.salary_per_volunteer }}
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <div class="modal fade" id="paymentModal" tabindex="-1">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Confirm Payment</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to process payment of ₹<span id="paymentAmount"></span>?</p>
+                                    <div class="progress d-none">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="button" class="btn btn-success" id="confirmPayment">Confirm Payment</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--<a href="#sell-products" class="btn sell-product-btn" onclick="showProductForm('{{ event.id }}')">
+                <i class="fas fa-tag me-2"></i>Sell Product
+            </a>
+
+            
+            <div id="sellProductForm{{ event.id }}" class="sell-product-form">
+                <h5>Sell a Product for {{ event.event_name }}</h5>
+                <form action="{{ url_for('upload_product') }}" method="POST" enctype="multipart/form-data" class="product-upload-form" onsubmit="handleProductSubmit(event, '{{ event.id }}')">
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                    
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Product Type</label>
+                            <select class="form-select" name="product-type" onchange="toggleProductFields(this)" required>
+                                <option value="">Select Product Type</option>
+                                <option value="wholesale">Wholesale Plastics</option>
+                                <option value="recycled">Recycled Products</option>
+                            </select>
+                        </div>
+                    </div>
+            
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Product Name</label>
+                            <input class="form-control" type="text" name="product-name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Price (₹)</label>
+                            <input class="form-control" type="number" step="0.01" name="price" required>
+                        </div>
+                    </div>
+                    
+                
+                    <div id="wholesalePlasticsField" class="row mb-3" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label">Wholesale Plastics Quantity (kg)</label>
+                            <input class="form-control" type="number" step="0.1" min="0" name="wholesale-plastics">
+                        </div>
+                    </div>
+                    
+                    
+                    <div id="recycledProductsField" class="row mb-3" style="display: none;">
+                        <div class="col-md-6">
+                            <label class="form-label">Recycled Products Quantity (units)</label>
+                            <input class="form-control" type="number" min="0" name="recycled-products">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Product Description</label>
+                        <textarea class="form-control" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Upload Product Image</label>
+                        <input class="form-control" type="file" name="product-image" accept="image/*" required>
+                    </div>
+                    <div class="form-feedback mb-3 d-none">
+                        <div class="alert alert-danger"></div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success">Upload Product</button>
+                        <button type="button" class="btn btn-secondary" onclick="hideProductForm('{{ event.id }}')">Cancel</button>
+                    </div>
+                </form>
+            </div>-->
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+    async function updatePlastics(eventId, volunteerId, plastics) {
+    try {
+        const response = await fetch('/update_volunteer_plastics', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `event_id=${eventId}&volunteer_id=${volunteerId}&plastics=${plastics}`
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update the total plastics display
+            document.querySelector('[data-total-plastics]').textContent = 
+                `${data.total_plastics.toFixed(1)} kg`;
+            showNotification('Plastics collected updated successfully!');
+        } else {
+            showNotification('Error updating plastics collected: ' + data.message, 'error');
+        }
+    } catch (error) {
+        showNotification('Error updating plastics collected', 'error');
+        console.error('Error:', error);
+    }
+}
+    
+async function updateMetrics(e, eventId) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    
+    const submitButton = form.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = 'Updating...';
+    submitButton.disabled = true;
+    
+    try {
+        const response = await fetch(`/update-metrics/${eventId}`, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update display
+            const productsInput = form.querySelector('input[name="products_recycled"]');
+            document.querySelector('[data-total-products]').textContent = productsInput.value;
+            
+            // Show success notification using existing notification system
+            const notification = document.createElement('div');
+            notification.className = 'notification success';
+            notification.textContent = 'Products recycled updated successfully!';
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+            
+        } else {
+            throw new Error(data.message || 'Update failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        const notification = document.createElement('div');
+        notification.className = 'notification error';
+        notification.textContent = 'Error updating products recycled';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    } finally {
+        submitButton.textContent = originalButtonText;
+        submitButton.disabled = false;
+    }
+}
+
+function showMetricsNotification() {
+    const metricsModal = document.getElementById('metricsSuccessModal');
+    const metricsOverlay = document.getElementById('metricsModalOverlay');
+    
+    if (metricsModal && metricsOverlay) {
+        metricsOverlay.style.display = 'block';
+        metricsModal.style.display = 'block';
+    } else {
+        console.error('Notification elements not found');
+    }
+}
+
+function closeMetricsNotification() {
+    const metricsModal = document.getElementById('metricsSuccessModal');
+    const metricsOverlay = document.getElementById('metricsModalOverlay');
+    
+    if (metricsModal && metricsOverlay) {
+        metricsOverlay.style.display = 'none';
+        metricsModal.style.display = 'none';
+    }
+}
+// Function to animate value changes
+function animateValue(element, start, end, prefix = '', suffix = '') {
+    const duration = 1000; // 1 second animation
+    const steps = 60;
+    const step = (end - start) / steps;
+    let current = start;
+    let counter = 0;
+
+    const timer = setInterval(() => {
+        counter++;
+        current += step;
+        if (counter >= steps) {
+            clearInterval(timer);
+            current = end;
+        }
+        element.textContent = `${prefix}${current.toFixed(1)}${suffix}`;
+    }, duration / steps);
+}
+
+// Function to show notifications
+function showNotification(message, type = 'success') {
+    // Create notification element if it doesn't exist
+    let notification = document.getElementById('notification');
+    if (!notification) {
+        notification = document.createElement('div');
+        notification.id = 'notification';
+        document.body.appendChild(notification);
+    }
+
+    // Set notification styles based on type
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    notification.style.display = 'block';
+
+    // Hide notification after 3 seconds
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);
+}
+
+        async function updateHours(eventId, volunteerId, hours) {
+            try {
+                const response = await fetch('/update_volunteer_hours', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `event_id=${eventId}&volunteer_id=${volunteerId}&hours=${hours}`
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error updating hours: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error updating hours');
+            }
+        }
+
+        async function markAsPaid(eventId, volunteerId) {
+            try {
+                const response = await fetch(`/mark-payment/${eventId}/${volunteerId}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Error updating payment status: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error updating payment status');
+            }
+        }
+
+        function exportData() {
+            const month = document.getElementById('monthFilter').value;
+            window.location.href = `/export-completed-events?month=${month}`;
+        }
+
+        document.getElementById('monthFilter').addEventListener('change', function() {
+            const month = this.value;
+            window.location.href = `/completed-events?month=${month}`;
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+    const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    let currentPaymentSection = null;
+
+    document.querySelectorAll('.payment-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            currentPaymentSection = this.closest('.payment-section');
+            const amount = currentPaymentSection.dataset.amount;
+            document.getElementById('paymentAmount').textContent = amount;
+            paymentModal.show();
+        });
+    });
+
+    document.getElementById('confirmPayment').addEventListener('click', async function() {
+        if (!currentPaymentSection) return;
+
+        const eventId = currentPaymentSection.dataset.eventId;
+        const volunteerId = currentPaymentSection.dataset.volunteerId;
+        
+        this.disabled = true;
+        this.textContent = 'Processing...';
+        document.querySelector('.progress').classList.remove('d-none');
+        
+        try {
+            const response = await fetch(`/mark-payment/${eventId}/${volunteerId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                // Update UI
+                const paymentBtn = currentPaymentSection.querySelector('.payment-btn');
+                paymentBtn.style.display = 'none';
+                
+                // Create and show the paid status
+                const paidStatus = document.createElement('span');
+                paidStatus.className = 'payment-status text-success';
+                paidStatus.innerHTML = '<i class="fas fa-check-circle"></i> Paid';
+                currentPaymentSection.appendChild(paidStatus);
+                
+                paymentModal.hide();
+            } else {
+                alert('Payment failed: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error processing payment');
+        } finally {
+            this.disabled = false;
+            this.textContent = 'Confirm Payment';
+            document.querySelector('.progress').classList.add('d-none');
+        }
+    });
+});
+
+function toggleProductForm(eventId) {
+            const form = document.getElementById(`sellProductForm${eventId}`);
+            if (form.style.display === 'none' || !form.style.display) {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+        function showProductForm(eventId) {
+            // Hide all other forms first
+            document.querySelectorAll('.sell-product-form').forEach(form => {
+                form.style.display = 'none';
+            });
+            
+            // Show the selected form
+            const form = document.getElementById(`sellProductForm${eventId}`);
+            if (form) {
+                form.style.display = 'block';
+                form.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function hideProductForm(eventId) {
+            const form = document.getElementById(`sellProductForm${eventId}`);
+            if (form) {
+                form.style.display = 'none';
+            }
+        }
+
+        // Add event listeners when the document loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add submit handlers to all product forms
+            document.querySelectorAll('.product-upload-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const submitButton = this.querySelector('button[type="submit"]');
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+                });
+            });
+        });
+
+        function showNotification() {
+            document.getElementById('modalOverlay').style.display = 'block';
+            document.getElementById('successModal').style.display = 'block';
+        }
+
+        function closeNotification() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('successModal').style.display = 'none';
+            // Clear form and hide it after closing notification
+            document.querySelectorAll('.product-upload-form').forEach(form => {
+                form.reset();
+            });
+            document.querySelectorAll('.sell-product-form').forEach(form => {
+                form.style.display = 'none';
+            });
+        }
+
+        function showProductForm(eventId) {
+    document.querySelectorAll('.sell-product-form').forEach(form => {
+        form.style.display = 'none';
+    });
+    
+    const form = document.getElementById(`sellProductForm${eventId}`);
+    if (form) {
+        form.style.display = 'block';
+        form.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function hideProductForm(eventId) {
+    const form = document.getElementById(`sellProductForm${eventId}`);
+    if (form) {
+        form.style.display = 'none';
+        form.querySelector('form').reset();
+        // Reset the product type fields
+        document.getElementById('wholesalePlasticsField').style.display = 'none';
+        document.getElementById('recycledProductsField').style.display = 'none';
+        // Reset any error messages
+        const feedback = form.querySelector('.form-feedback');
+        feedback.classList.add('d-none');
+    }
+}
+
+function toggleProductFields(select) {
+    const wholesalePlasticsField = document.getElementById('wholesalePlasticsField');
+    const recycledProductsField = document.getElementById('recycledProductsField');
+    
+    if (select.value === 'wholesale') {
+        wholesalePlasticsField.style.display = 'block';
+        recycledProductsField.style.display = 'none';
+        // Clear recycled products input
+        recycledProductsField.querySelector('input').value = '';
+    } else if (select.value === 'recycled') {
+        wholesalePlasticsField.style.display = 'none';
+        recycledProductsField.style.display = 'block';
+        // Clear wholesale plastics input
+        wholesalePlasticsField.querySelector('input').value = '';
+    } else {
+        wholesalePlasticsField.style.display = 'none';
+        recycledProductsField.style.display = 'none';
+    }
+}
+
+async function handleProductSubmit(event, eventId) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Ensure product type is being set correctly
+    const productType = formData.get('product-type');
+    formData.set('category', productType); // Add category explicitly
+    
+    try {
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+
+        const response = await fetch(form.action, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            showNotification();
+            form.reset();
+            // Reset product type fields
+            document.getElementById('wholesalePlasticsField').style.display = 'none';
+            document.getElementById('recycledProductsField').style.display = 'none';
+        } else {
+            const data = await response.json();
+            showError(form, data.message || 'Error uploading product. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showError(form, 'Error uploading product. Please try again.');
+    } finally {
+        const submitButton = form.querySelector('button[type="submit"]');
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Upload Product';
+    }
+}
+
+function showError(form, message) {
+    const feedback = form.querySelector('.form-feedback');
+    const alert = feedback.querySelector('.alert');
+    alert.textContent = message;
+    feedback.classList.remove('d-none');
+}
+
+// Initialize form validation on page load
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.product-upload-form').forEach(form => {
+        const numericInputs = form.querySelectorAll('input[type="number"]');
+        numericInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) {
+                    this.value = 0;
+                }
+            });
+        });
+    });
+});
+    </script>
+</body>
+</html>
+</body>
+</html>

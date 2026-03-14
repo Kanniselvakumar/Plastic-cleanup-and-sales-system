@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate - Cleanup Initiative</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input, select, button {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Donate</h1>
+</header>
+
+
+<div class="container">
+    <h2>Support Cleanup Initiatives</h2>
+    <form action="submit_donation.php" method="POST">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+        <label for="contact">Your Contact Information</label>
+        <input type="text" id="contact" name="contact" placeholder="Enter your contact details" required>
+
+        <label for="organizer">Select Organizer</label>
+        <select id="organizer" name="organizer" required>
+            <option value="">-- Choose an Organizer --</option>
+            <option value="organizer1">Organizer 1</option>
+            <option value="organizer2">Organizer 2</option>
+            <option value="organizer3">Organizer 3</option>
+        </select>
+
+        <label for="amount">Donation Amount</label>
+        <input type="number" id="amount" name="amount" placeholder="Enter the amount (in INR)" required>
+
+        <button type="submit">Donate</button>
+    </form>
+</div>
+<div id="donationModal" class="modal">
+    <div id="modalContent" class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <!-- Organiser content will be dynamically inserted here -->
+    </div>
+</div>
+
+<footer>
+    <p>&copy; 2024 Cleanup Initiative Platform. All Rights Reserved.</p>
+</footer>
+<script>
+    function showDonationForm() {
+    fetch('/get_organisers')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const modalContent = document.getElementById('modalContent');
+                modalContent.innerHTML = `
+                    <h2>Select an Organiser</h2>
+                    ${data.organisers
+                        .map(
+                            organiser => `
+                            <div class="organiser-item">
+                                <p><strong>${organiser.username}</strong></p>
+                                <button onclick="confirmPayment(${organiser.id}, '${organiser.username}')">Confirm Payment</button>
+                            </div>`
+                        )
+                        .join('')}
+                `;
+                document.getElementById('donationModal').style.display = 'block';
+            }
+        });
+}
+
+function confirmPayment(organiserId, organiserName) {
+    fetch('/confirm_payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ organiser_id: organiserId })
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert(`Payment confirmed for organiser: ${organiserName}`);
+                window.location.href = `/donation_confirmation/${data.donation_id}`;
+            } else {
+                alert('Payment failed. Please try again.');
+            }
+        });
+}
+
+function closeModal() {
+    document.getElementById('donationModal').style.display = 'none';
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}Admin - Approve Products{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .product-card {
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: var(--transition);
+        display: flex;
+        flex-direction: column;
+        height: 650px; /* Fixed height for all cards */
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 320px; /* Fixed height for images */
+        object-fit: cover;
+        flex-shrink: 0; /* Prevent image from shrinking */
+    }
+
+    .product-info {
+        padding: 1.5rem;
+        flex-grow: 1; /* Allow info section to grow */
+        display: flex;
+        flex-direction: column;
+    }
+
+    .product-info h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem; /* Consistent font size */
+        line-height: 1.4;
+    }
+
+    .price {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .description {
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        flex-grow: 1; /* Allow description to take remaining space */
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* Limit to 3 lines */
+        -webkit-box-orient: vertical;
+    }
+
+    .product-actions {
+        padding: 1rem 1.5rem;
+        display: flex;
+        gap: 0.5rem;  /* Add gap between buttons */
+        background-color: rgba(5, 45, 20, 0.02);
+        flex-shrink: 0; /* Prevent actions from shrinking */
+    }
+
+    .product-actions form {
+        flex: 1;
+        margin: 0;  /* Remove any default form margins */
+    }
+
+    .action-button {
+        width: 100%;  /* Make button fill the form width */
+        padding: 0.75rem;
+        border: none;
+        cursor: pointer;
+        font-weight: 500;
+        transition: var(--transition);
+        color: white;
+        border-radius: var(--border-radius);  /* Add border radius to both buttons */
+    }
+
+    .approve-btn {
+        background-color: var(--secondary-color);
+    }
+
+    .approve-btn:hover {
+        background-color: var(--primary-color);
+    }
+
+    .reject-btn {
+        background-color: #dc2626;
+    }
+
+    .reject-btn:hover {
+        background-color: #b91c1c;
+    }
+
+    .no-products {
+        text-align: center;
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+    <h2>Pending Products for Approval</h2>
+    
+    {% if products %}
+    <div class="products-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <img class="product-image" src="/static/uploads/{{ product.image_path }}" alt="{{ product.name }}">
+            <div class="product-info">
+                <h3>{{ product.name }}</h3>
+                <p class="price">₹{{ product.price }}</p>
+                <p class="description">{{ product.description }}</p>
+            </div>
+            <div class="product-actions">
+                <form action="{{ url_for('approve_product', product_id=product.id) }}" method="POST">
+                    <input type="hidden" name="status" value="Approved">
+                    <button type="submit" class="action-button approve-btn">Approve</button>
+                </form>
+                <form action="{{ url_for('approve_product', product_id=product.id) }}" method="POST">
+                    <input type="hidden" name="status" value="Rejected">
+                    <button type="submit" class="action-button reject-btn">Reject</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-products">No products pending approval.</p>
+    {% endif %}
+{% endblock %}

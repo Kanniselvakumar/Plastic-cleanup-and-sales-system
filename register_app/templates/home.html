@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plastic Cleanup And Sales System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #052d14;
+            --primary-dark: #087d04;
+            --secondary: #087d04;
+            --accent: #4adb34;
+            --dark: #052d14;
+            --light: #ecf0f1;
+            --background: #ecf0f1;
+            --card-background: #ffffff;
+            --gradient: linear-gradient(135deg, #052d14 0%, #087d04 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(5, 45, 20, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 2rem;
+            /*background: var(--gradient);*/
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(5, 45, 20, 0.2);
+            transition: transform 0.3s ease;
+            white-space: nowrap;
+            border: 2px solid black;
+        }
+
+        .brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .brand-name {
+            color: #052d14;
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+
+        /*.brand-name {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #4adb34, #ecf0f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glowText 2s infinite alternate;
+        }*/
+        
+        @keyframes glowText {
+            from {
+                text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            }
+            to {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            }
+        }
+        
+        .brand-logo {
+    width: 35px;
+    height: 35px;
+    margin-right: -3px;
+    /*object-fit: contain;*/
+}
+
+        @media (max-width: 768px) {
+    .brand-name {
+        font-size: 1rem;
+    }
+    
+    .nav-links {
+        gap: 0.25rem;
+    }
+    
+    .nav-link {
+        padding: 0.5rem;
+    }
+}
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after {
+            width: 80%;
+        }
+        .nav-link i {
+        font-size: 0.9em;
+        }
+
+        .nav-link:hover {
+            color: var(--primary-dark);
+            background: rgba(5, 45, 20, 0.05);
+        }
+
+         .donate-btn {
+            background: #e74c3c; /* Changed to red */
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2); /* Updated shadow color */
+        }
+
+        .donate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3); /* Updated shadow color */
+            background: #c0392b; /* Darker red on hover */
+        }
+        .hero {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+            margin-top: 2rem;
+            padding-top:-7rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: /*linear-gradient(rgba(5, 45, 20, 0.7), rgba(8, 125, 4, 0.7)),*/
+                url("{{ url_for('static', filename='images/home_img3.jpeg') }}");
+            background-size: cover;
+            background-position: center 20%;
+            background-attachment: fixed;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 2rem;
+            margin-top: 10rem;
+            animation: fadeIn 1s ease-out;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            border-radius: 15px;
+        }
+        /*.hero-content h1 {
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-size: 4rem;
+        }*/
+    
+        .hero-content p {
+            color: #ffffff;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+            font-size: 1.6rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 768px) {
+            .hero-content {
+                margin-top: 8rem;
+                padding: 1.5rem;
+            }
+    
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+    
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+        }
+
+        .cta-btn {
+            background: #0b96cd;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(5, 45, 20, 0.3);
+            font-size:1.2rem;
+        }
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(5, 45, 20, 0.4);
+        }
+
+        .cta-btn1 {
+            background: #038430;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(5, 45, 20, 0.3);
+            font-size:1.2rem;
+        }
+        .cta-btn1:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(5, 45, 20, 0.4);
+        }
+
+       
+
+        .products {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--primary);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 1rem auto 0;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 1rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.product-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: auto; /* Pushes the button to the bottom */
+}
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 2rem;
+            position: relative;
+        }
+
+        .product-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .buy-btn {
+            background: var(--gradient);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(5, 45, 20, 0.2);
+        }
+
+        .buy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(5, 45, 20, 0.3);
+        }
+
+        .footer {
+            background: var(--primary);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            position: relative;
+            width: 100%;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .footer p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .product-card {
+                margin: 0 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .brand-name {
+                font-size: 1.2rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .product-card {
+                margin: 0 0.5rem;
+            }
+        }
+        .impact-container {
+      max-width: 1200px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+
+    .impact-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .impact-header h2 {
+      font-size: 2.5rem;
+      color: #1a1a1a;
+      margin-bottom: 1rem;
+    }
+
+    .impact-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 1rem;
+    }
+
+    .impact-card {
+      background: white;
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .impact-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .impact-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--accent-color);
+    }
+
+    .impact-card:nth-child(1) {
+      --accent-color: #3b82f6;
+    }
+
+    .impact-card:nth-child(2) {
+      --accent-color: #10b981;
+    }
+
+    .impact-card:nth-child(3) {
+      --accent-color: #8b5cf6;
+    }
+
+    .impact-card:nth-child(4) {
+      --accent-color: #f59e0b;
+    }
+
+    .impact-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--accent-color);
+      background: rgba(var(--accent-rgb), 0.1);
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      margin: 0 auto 1.5rem;
+    }
+
+    .impact-card:nth-child(1) .impact-icon {
+      --accent-rgb: 59, 130, 246;
+    }
+
+    .impact-card:nth-child(2) .impact-icon {
+      --accent-rgb: 16, 185, 129;
+    }
+
+    .impact-card:nth-child(3) .impact-icon {
+      --accent-rgb: 139, 92, 246;
+    }
+
+    .impact-card:nth-child(4) .impact-icon {
+      --accent-rgb: 245, 158, 11;
+    }
+
+    .impact-value {
+      font-size: 3rem;
+      font-weight: bold;
+      color: var(--accent-color);
+      margin-bottom: 0.5rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .impact-title {
+      font-size: 1.1rem;
+      color: #4b5563;
+      margin-bottom: 1rem;
+    }
+
+    .impact-card.animate .impact-value {
+      animation: countUp 2s forwards;
+    }
+
+    @keyframes countUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .impact-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+      }
+
+      .impact-header h2 {
+        font-size: 2rem;
+      }
+
+      .impact-value {
+        font-size: 2.5rem;
+      }
+    }
+    .leaderboard-container {
+      max-width: 1200px;
+      margin: 2rem auto 4rem;
+      padding: 0 1rem;
+    }
+
+    .leaderboard-header {
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    .leaderboard-actions {
+    text-align: center;
+    margin-top: 1rem;
+    margin-bottom: 3rem; /* Added space */
+    }
+
+    .leaderboard-header h2 {
+      font-size: 2.5rem;
+      color: #1a1a1a;
+      margin-bottom: 1rem;
+    }
+
+    .leaderboard-header p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+
+    .leaderboard-table {
+      background: white;
+      border-radius: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .leaderboard-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 1.5rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .leaderboard-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .leaderboard-table tr:hover {
+      background-color: #f8f9fa;
+    }
+
+    .rank {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .rank-number {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    /* Top 3 ranks styling */
+    .rank-1 .rank-number {
+      background: linear-gradient(135deg, #ffd700 0%, #ffc800 100%);
+      color: #000;
+    }
+
+    .rank-2 .rank-number {
+      background: linear-gradient(135deg, #C0C0C0 0%, #D3D3D3 100%);
+      color: #000;
+    }
+
+    .rank-3 .rank-number {
+      background: linear-gradient(135deg, #CD7F32 0%, #DBA067 100%);
+      color: #000;
+    }
+
+    .volunteer-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .volunteer-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #4b5563;
+    }
+
+    .volunteer-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .volunteer-name {
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .volunteer-location {
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .plastics-collected {
+      font-weight: 600;
+      color: #047857;
+    }
+
+    .events-participated {
+      color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+      .leaderboard-table {
+        overflow-x: auto;
+      }
+      
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 1rem;
+      }
+
+      .volunteer-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+    }
+    .hidden-row {
+    display: none;
+}
+.modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 1200px;
+            max-height: 90vh;
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            z-index: 2001;
+            background: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f5f5f5;
+            transform: scale(1.1);
+        }
+
+        /* Prevent body scroll when modal is open */
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* Animation for modal */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -48%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .modal-content {
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+
+        .featured-products {
+    max-width: 1400px;
+    margin: 5rem auto;
+    padding: 2rem;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    color: #052d14;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.section-header h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(135deg, #052d14 0%, #087d04 100%);
+    border-radius: 2px;
+}
+
+.section-header p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+}
+
+
+
+.product-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-details {
+    padding: 1.5rem;
+}
+
+.product-title {
+    font-size: 1.25rem;
+    color: #052d14;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.product-price {
+    font-size: 1.5rem;
+    color: #087d04;
+    font-weight: 700;
+    margin: 1rem 0;
+}
+
+.product-description {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+    /* Add ellipsis for long descriptions */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.buy-button {
+    display: inline-block;
+    width: 90%;
+    padding: 10px 20px;
+    background-color:#079fb9;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: 0.3s ease;
+}
+
+.buy-button:hover {
+    background-color: #054855;
+}
+
+    .product-footer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+.stock-status {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.in-stock {
+    color: #087d04;
+}
+
+.low-stock {
+    color: #e67e22;
+}
+
+.out-of-stock {
+    color: #e74c3c;
+}
+
+@media (max-width: 768px) {
+    .section-header h2 {
+        font-size: 2rem;
+    }
+    
+    .products-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .product-image {
+        height: 200px;
+    }
+}
+
+    #login-modal {
+    display: none;
+    position: absolute;
+    top: -9.7rem;
+    left: 23rem;
+    right: 10rem;
+    bottom: 250rem;
+    width: 100%;
+    height: 100%;
+    background: none;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Content */
+#login-modal .modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Close Button */
+#login-modal .modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    padding: 5px;
+    background: none;
+    border: none;
+}
+
+/* Modal Title */
+#login-modal h3 {
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+/* Modal Description */
+#login-modal p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+/* Create Button */
+#login-modal .cta-btn:first-of-type {
+    background-color: #28a745;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Login Button */
+#login-modal .cta-btn:last-of-type {
+    background-color: #007bff;
+    color: white;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* Button Hover States */
+#login-modal .cta-btn:first-of-type:hover {
+    background-color: #218838;
+}
+
+#login-modal .cta-btn:last-of-type:hover {
+    background-color: #0056b3;
+}
+.modal-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:none;
+    backdrop-filter: none; 
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.modal-close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    font-size: 18px;
+    color: #666;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+.modal-content h3 {
+    font-size: 1.5rem;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.create-button, .login-button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+    transition: background-color 0.2s ease;
+}
+
+.create-button {
+    background-color: #0093cd;
+    color: white;
+}
+
+.login-button {
+    background-color: #cf9519;
+    color: white;
+}
+
+.create-button:hover {
+    background-color: #0d5865;
+}
+
+.login-button:hover {
+    background-color: #9a6b07;
+}
+
+    </style>
+</head>
+<body>
+</div>
+  <nav class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <img src="{{ url_for('static', filename='images/logo6-removebg.png') }}" alt="Eco Logo" class="brand-logo">
+                
+                <span class="brand-name">Plastic Cleanup And Sales System</span>
+            </div>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <!--<a href="{{ url_for('register') }}" class="nav-link">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Register</span>
+                </a>-->
+                <a href="#" class="nav-link" id="login-dropdown" style="position: relative;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Login</span>
+                    <i class="fas fa-caret-down"></i>
+                </a>
+                <a href="{{ url_for('events') }}" class="nav-link">
+                    <i class="fas fa-calendar"></i>
+                    <span>Events</span>
+                </a>
+                <!--<a href="{{ url_for('guides') }}" class="nav-link">
+                    <i class="fas fa-book"></i>
+                    <span>Guide</span>
+                </a>
+                <a href="{{ url_for('guides') }}" class="nav-link">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Ideas</span>
+                </a>-->
+                <a href="{{ url_for('guides') }}" class="nav-link">
+                    <i class="fa-sharp fa-solid fa-recycle"></i>
+                    <span>EcoCycle</span>
+                </a>    
+                <a href="{{ url_for('sales') }}" class="nav-link">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Buy</span>
+                </a>
+                <a href="{{ url_for('donation') }}" class="nav-link donate-btn">
+                    <i class="fas fa-heart"></i>
+                    <span>Donate</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="login-modal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h3>Create an Account</h3>
+            <p>New here? Get started by creating an account.</p>
+            <button class="create-button" onclick="redirectToRegister()">Create</button>
+            <button class="login-button" onclick="redirectToLogin()">Login</button>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Join the Cleanup Movement</h1>
+            <p>Together, we can create a sustainable future through plastic cleanup and recycling</p>
+            <a href="{{ url_for('register') }}" class="cta-btn">Get Started</a>
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <div class="section-header">
+            <h2>Featured Products</h2>
+            <p>Discover our collection of eco-friendly recycled products</p>
+        </div>
+        
+        <div class="products-container">
+            {% for product in featured_products %}
+            <div class="product-card">
+                <img src="{{ product.image_url }}" alt="{{ product.name }}" class="product-image">
+                <div class="product-details">
+                    <h3 class="product-title">{{ product.name }}</h3>
+                    <p class="product-description">{{ product.description }}</p>
+                    <div class="product-price">{{ product.formatted_price }}</div>
+                    <div class="stock-status {{ product.stock_status }}">{{ product.stock_text }}</div>
+                    <div class="product-footer">
+                        <a href="{{ url_for('sales') }}" class="buy-button">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    
+
+    <div class="impact-container">
+        <div class="impact-header">
+          <h2>Our Environmental Impact</h2>
+          <p>Making a difference together for a cleaner tomorrow</p>
+        </div>
+        <div class="impact-grid">
+          <div class="impact-card">
+            <div class="impact-icon">
+              <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="impact-value" data-target="{{ impact_stats.total_events }}">{{ impact_stats.total_events }}</div>
+            <div class="impact-title">Events Completed</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="impact-value" data-target="{{ impact_stats.total_volunteers }}">{{ impact_stats.total_volunteers }}</div>
+            <div class="impact-title">Volunteers Engaged</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-icon">
+              <i class="fas fa-recycle"></i>
+            </div>
+            <div class="impact-value" data-target="{{ impact_stats.total_plastics }}" data-unit=" kg">{{ "%.2f"|format(impact_stats.total_plastics) }} kg</div>
+            <div class="impact-title">Plastics Collected</div>
+          </div>
+          <div class="impact-card">
+            <div class="impact-icon">
+              <i class="fas fa-box"></i>
+            </div>
+            <div class="impact-value" data-target="{{ impact_stats.total_products }}">{{ impact_stats.total_products }}</div>
+            <div class="impact-title">Products Recycled</div>
+          </div>
+        </div>
+      </div>  
+      
+      <div class="leaderboard-container">
+        <div class="leaderboard-header">
+          <h2>Top Volunteers</h2>
+          <p>Recognizing our most dedicated environmental champions</p>
+        </div>
+        
+        <div class="leaderboard-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Volunteer</th>
+                        <th>Plastics Collected</th>
+                        <th>Events Participated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for volunteer in top_volunteers %}
+                    <tr class="rank-{{ loop.index }} {{ 'hidden-row' if loop.index > 3 }}">
+                        <td>
+                            <div class="rank">
+                                <div class="rank-number">#{{ loop.index }}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="volunteer-info">
+                                <div class="volunteer-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="volunteer-details">
+                                    <span class="volunteer-name">{{ volunteer.name }}</span>
+                                   <!--<span class="volunteer-location">{{ volunteer.location }}</span>-->
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="plastics-collected">{{ "%.2f"|format(volunteer.plastics_collected) }} kg</span>
+                        </td>
+                        <td>
+                            <span class="events-participated">{{ volunteer.events_participated }} events</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="leaderboard-actions" style="text-align: center; margin-top: 1rem; margin-bottom: 3rem;">
+            <button id="view-more-btn" class="cta-btn1">View More</button>
+        </div>
+
+        <footer class="footer" style="width: 100%; margin: 0; background: linear-gradient(135deg, #052d14, #087d04); color: white; padding: 2rem 0 0; text-align: center; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box;">
+        <div style="max-width: 1200px; width: 100%; padding: 0 1rem; display: flex; flex-direction: column; align-items: center;">
+        <p style="font-size: 1.2rem; opacity: 0.9; margin-bottom: 0;">&copy; 2025 Plastic Cleanup And Sales System.<br>All rights reserved.</p>
+        <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+            <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
+            <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
+        </div>
+        </div>
+        </footer>
+
+        
+
+    <script>
+       // Open the login modal
+document.getElementById('login-dropdown').addEventListener('click', function(event) {
+    event.preventDefault();
+    document.getElementById('login-modal').style.display = 'flex';
+});
+
+// Close the login modal
+document.querySelector('.modal-close').addEventListener('click', function() {
+    document.getElementById('login-modal').style.display = 'none';
+});
+
+// Redirect to Register Page
+function redirectToRegister() {
+    window.location.href = "{{ url_for('register') }}";
+}
+
+// Redirect to Login Page
+function redirectToLogin() {
+    window.location.href = "{{ url_for('login') }}";
+}
+
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+                navbar.style.boxShadow = '0 4px 20px rgba(5, 45, 20, 0.15)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.boxShadow = '0 4px 20px rgba(5, 45, 20, 0.1)';
+            }
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all product cards
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+
+        function animateValue(element, start, end, duration) {
+      const isDecimal = String(end).includes('.');
+      const unit = element.dataset.unit || '';
+      let startTimestamp = null;
+      
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        const currentValue = start + (end - start) * progress;
+        
+        element.textContent = isDecimal 
+          ? currentValue.toFixed(2) + unit
+          : Math.floor(currentValue).toLocaleString() + unit;
+        
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      
+      window.requestAnimationFrame(step);
+    }
+
+    const observer1= new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+          entry.target.classList.add('animate');
+          const valueDisplay = entry.target.querySelector('.impact-value');
+          const endValue = parseFloat(valueDisplay.dataset.target);
+          if (!isNaN(endValue)) {
+            animateValue(valueDisplay, 0, endValue, 2000);
+          }
+        }
+      });
+    }, {
+      threshold: 0.1
+    });
+
+    document.querySelectorAll('.impact-card').forEach(card => {
+      observer1.observe(card);
+    });
+    const viewMoreBtn = document.getElementById('view-more-btn');
+    const hiddenRows = document.querySelectorAll('.hidden-row');
+    let isExpanded = false;
+
+    viewMoreBtn.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+        hiddenRows.forEach(row => {
+            row.style.display = isExpanded ? 'table-row' : 'none';
+        });
+        viewMoreBtn.textContent = isExpanded ? 'View Less' : 'View More';
+    });
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Add loading animation for images
+    const productImages = document.querySelectorAll('.product-image');
+    productImages.forEach(img => {
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.3s ease-in';
+        
+        img.onload = function() {
+            img.style.opacity = '1';
+        };
+    });
+
+    // Intersection Observer for fade-in animation
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    // Observe all product cards
+    document.querySelectorAll('.product-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'all 0.6s ease-out';
+        observer.observe(card);
+    });
+});
+    </script>
+</body>
+</html>

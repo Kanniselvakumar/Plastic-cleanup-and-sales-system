@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Together We Can Make Earth Cleaner</title>
+    <style>
+        :root {
+            --primary-color: #052d14;
+            --secondary-color: #087d04;
+            --accent-color: #4adb34;
+            --success-color: #052d14;
+            --background-color: #09562e;
+            --card-background: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: white;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 1rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            color: var(--accent-color);
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            color: var(--accent-color);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .donation-section {
+            background: var(--card-background);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+        }
+
+        .benefits-list {
+            margin: 2rem 0;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .benefit-item::before {
+            content: "✓";
+            color: var(--accent-color);
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        label {
+            font-weight: bold;
+            color: white;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2em;
+        }
+
+        option {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(74, 219, 52, 0.4);
+        }
+
+        .impact-message {
+            text-align: center;
+            margin: 4rem auto;
+            max-width: 800px;
+            padding: 2rem;
+            background: var(--card-background);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .impact-message h2 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .stat-card {
+                width: 100%;
+            }
+        }
+
+        .impact-container {
+            max-width: 1200px;
+            margin: 4rem auto;
+            padding: 0 1rem;
+        }
+
+        .impact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .impact-header h2 {
+            font-size: 2.5rem;
+            color: #4adb34;
+            margin-bottom: 1rem;
+        }
+
+        .impact-header p {
+            color: #ffffff;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        .impact-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            padding: 1rem;
+        }
+
+        .impact-card {
+            flex: 1;
+            background: rgba(8, 125, 4, 0.3);
+            border: 1px solid rgba(74, 219, 52, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .impact-card:hover {
+            transform: translateY(-10px);
+            background: rgba(8, 125, 4, 0.4);
+            border-color: rgba(74, 219, 52, 0.4);
+        }
+
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #4adb34;
+        }
+
+        .impact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #4adb34;
+            background: rgba(74, 219, 52, 0.1);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+        }
+        .impact-icon i {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #4adb34;
+        }
+
+        .impact-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4adb34;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .impact-title {
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .impact-card.animate .impact-value {
+            animation: countUp 2s forwards;
+        }
+
+        @keyframes countUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .impact-grid {
+                flex-direction: column;
+            }
+
+            .impact-card {
+                width: 100%;
+            }
+
+            .impact-header h2 {
+                font-size: 2rem;
+            }
+
+            .impact-value {
+                font-size: 2rem;
+            }
+        }
+        .organizer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.organizer-box {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.organizer-box:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: var(--accent-color);
+    transform: translateY(-3px);
+}
+
+.organizer-box.selected {
+    background: rgba(74, 219, 52, 0.15);
+    border-color: var(--accent-color);
+}
+
+.organizer-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent-color);
+    margin-bottom: 0.8rem;
+}
+
+.organizer-location {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.8rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.organizer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.organizer-stats {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.8rem;
+}
+
+/* Scrollbar styling */
+.organizer-grid::-webkit-scrollbar {
+    width: 8px;
+}
+
+.organizer-grid::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.organizer-grid::-webkit-scrollbar-thumb {
+    background: var(--accent-color);
+    border-radius: 4px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Together We Can Make Earth Cleaner</h1>
+            <p>Your support powers our global mission to create a plastic-free world. Every contribution brings us closer to a cleaner, healthier planet for all.</p>
+        </div>
+
+        <div class="donation-section">
+            <p>Be the spark that ignites change. Your individual contribution creates ripples of impact across the globe.</p>
+            
+            <div class="benefits-list">
+                <div class="benefit-item">Become a Guardian of Our Planet's Future</div>
+                <div class="benefit-item">Join local cleanup events</div>
+                <div class="benefit-item">Receive impact reports</div>
+                <div class="benefit-item">Your Contribution Echoes Beyond Borders</div>
+            </div>
+
+            <form id="donationForm">
+                <div>
+                    <label for="name">Your Name</label>
+                    <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                </div>
+
+                <div>
+                    <label for="contact">Your Email ID</label>
+                    <input type="text" id="contact" name="contact" placeholder="Enter your Email ID" required>
+                </div>
+
+                <div>
+                    <label for="organizer">Select Organizer</label>
+                    <select id="organizer" name="organizer" required>
+                        <option value="">-- Choose an Organizer --</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="amount">Donation Amount</label>
+                    <input type="number" id="amount" name="amount" placeholder="Enter the amount (in INR)" required>
+                </div>
+
+                <button type="button" onclick="processDonation()">BE A CHANGE MAKER</button>
+            </form>
+        </div>
+
+        <div class="impact-message">
+            <h2>Your Impact Matters</h2>
+            <p>Every piece of plastic removed, every cleanup organized, and every donation made brings us closer to our vision of a cleaner planet. Whether you're an individual passionate about change, your contribution helps create lasting environmental change worldwide.</p>
+        </div>
+
+        <div class="impact-container">
+            <div class="impact-header">
+              <h2>Our Environmental Impact</h2>
+              <p>Making a difference together for a cleaner tomorrow</p>
+            </div>
+            <div class="impact-grid">
+              <div class="impact-card">
+                <div class="impact-value" data-target="{{ impact_stats.total_events }}">{{ impact_stats.total_events }}</div>
+                <div class="impact-title">Events Completed</div>
+              </div>
+              <div class="impact-card">
+                <div class="impact-value" data-target="{{ impact_stats.total_volunteers }}">{{ impact_stats.total_volunteers }}</div>
+                <div class="impact-title">Volunteers Engaged</div>
+              </div>
+              <div class="impact-card">
+                <div class="impact-value" data-target="{{ impact_stats.total_plastics }}" data-unit=" kg">{{ "%.2f"|format(impact_stats.total_plastics) }} kg</div>
+                <div class="impact-title">Plastics Collected</div>
+              </div>
+              <div class="impact-card">
+                <div class="impact-value" data-target="{{ impact_stats.total_products }}">{{ impact_stats.total_products }}</div>
+                <div class="impact-title">Products Recycled</div>
+              </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectContainer = document.querySelector('#organizer').parentElement;
+            const organizerGrid = document.createElement('div');
+            organizerGrid.className = 'organizer-grid';
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'organizer';
+            hiddenInput.id = 'organizer';
+            selectContainer.innerHTML = '<label>Select Organizer</label>';
+            selectContainer.appendChild(hiddenInput);
+            selectContainer.appendChild(organizerGrid);
+
+            fetch('/get_organisers')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        data.organisers.forEach(organiser => {
+                            const formatLocation = (location) => {
+                                if (!location) return 'Location not specified';
+                                return location
+                                    .replace(/[_-]/g, ' ')
+                                    .split(' ')
+                                    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                                    .join(' ');
+                            };
+
+                            const organizerBox = document.createElement('div');
+                            organizerBox.className = 'organizer-box';
+                            organizerBox.dataset.id = organiser.id;
+                            
+                            organizerBox.innerHTML = `
+                                <div class="organizer-name">${organiser.username}</div>
+                                <div class="organizer-location">
+                                    <span>📍</span>
+                                    <span>${formatLocation(organiser.location)}</span>
+                                </div>
+                                <div class="organizer-contact">
+                                    ${organiser.email ? `
+                                        <div class="contact-item">
+                                            <span>📧</span>
+                                            <span>${organiser.email}</span>
+                                        </div>
+                                    ` : ''}
+                                     ${organiser.mobile ? `
+                                        <div class="contact-item">
+                                            <span>📱</span>
+                                            <span>${organiser.mobile}</span>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="organizer-stats">
+                                    <div class="stat-item">
+                                        <div class="stat-value">${organiser.total_events || 0}</div>
+                                        <div class="stat-label">Completed Events</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-value">${organiser.total_products || 0}</div>
+                                        <div class="stat-label">Products Recycled</div>
+                                    </div>
+                                </div>
+                            `;
+
+                            organizerBox.addEventListener('click', function() {
+                                document.querySelectorAll('.organizer-box').forEach(box => {
+                                    box.classList.remove('selected');
+                                });
+                                this.classList.add('selected');
+                                hiddenInput.value = this.dataset.id;
+                            });
+
+                            organizerGrid.appendChild(organizerBox);
+                        });
+                    }
+                })
+                .catch(error => console.error('Error loading organisers:', error));
+        });
+
+        function processDonation() {
+            const name = document.getElementById('name').value;
+            const contact = document.getElementById('contact').value;
+            const amount = document.getElementById('amount').value;
+            const organizerId = document.getElementById('organizer').value;
+
+            if (!name || !contact || !amount || !organizerId) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const donorInfo = {
+                name: name,
+                email: contact,
+                phone: contact,
+                amount: amount
+            };
+
+            fetch('/store_donor_info', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(donorInfo)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    return fetch('/confirm_payment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ organiser_id: organizerId })
+                    });
+                } else {
+                    throw new Error('Failed to store donor info');
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = `/donation_confirmation/${data.donation_id}`;
+                } else {
+                    alert('Payment failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error processing donation:', error);
+                alert('Failed to process donation. Please try again.');
+            });
+        }
+
+        function animateValue(element, start, end, duration) {
+            const isDecimal = String(end).includes('.');
+            const unit = element.dataset.unit || '';
+            let startTimestamp = null;
+            
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentValue = start + (end - start) * progress;
+                
+                element.textContent = isDecimal 
+                    ? currentValue.toFixed(2) + unit
+                    : Math.floor(currentValue).toLocaleString() + unit;
+                
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            
+            window.requestAnimationFrame(step);
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+                    entry.target.classList.add('animate');
+                    const valueDisplay = entry.target.querySelector('.impact-value');
+                    const endValue = parseFloat(valueDisplay.dataset.target);
+                    if (!isNaN(endValue)) {
+                        animateValue(valueDisplay, 0, endValue, 2000);
+                    }
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.impact-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
