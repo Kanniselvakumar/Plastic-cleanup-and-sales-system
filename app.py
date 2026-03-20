@@ -20,28 +20,29 @@ from sklearn.model_selection import train_test_split
 import joblib
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = os.environ.get('SECRET_KEY', 'your_secret_key')
 
 mail = Mail()
 
 # Register the donation blueprint
 #app.register_blueprint(donation_bp)
 
-# Database configuration
+# Database configuration - uses environment variables on Railway
 DATABASE_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': 'Ksksuriya1826',
-    'database': 'plastic_cleanup_db'
+    'host': os.environ.get('MYSQLHOST', 'localhost'),
+    'user': os.environ.get('MYSQLUSER', 'root'),
+    'password': os.environ.get('MYSQLPASSWORD', 'Ksksuriya1826'),
+    'database': os.environ.get('MYSQLDATABASE', 'plastic_cleanup_db'),
+    'port': int(os.environ.get('MYSQLPORT', 3306))
 }
 
 
 def init_mail(app):
-    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+    app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
     app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = 'kanniselvakumar@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'ebae tmef whzc xytb'
+    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'kanniselvakumar@gmail.com')
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'ebae tmef whzc xytb')
     mail.init_app(app)
 
 init_mail(app)
@@ -4720,4 +4721,5 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(debug=False, host='0.0.0.0', port=port)
