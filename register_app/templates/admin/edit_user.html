@@ -1,0 +1,104 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}Edit User{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .panel {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+    }
+
+    .panel h2 {
+        color: #052d14;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .field label {
+        color: #1f2937;
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+    }
+
+    .field input,
+    .field select {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-sizing: border-box;
+        padding: 0.8rem 0.9rem;
+        width: 100%;
+    }
+
+    .actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    .btn {
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        padding: 0.8rem 1.2rem;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: #087d04;
+        color: #ffffff;
+    }
+
+    .btn-secondary {
+        background: #e5e7eb;
+        color: #111827;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <h2>Edit User</h2>
+    <form method="post">
+        <div class="form-grid">
+            <div class="field">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" value="{{ user.username }}" required>
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" value="{{ user.email }}" required>
+            </div>
+            <div class="field">
+                <label for="mobile">Mobile</label>
+                <input id="mobile" name="mobile" type="text" value="{{ user.mobile }}" required>
+            </div>
+            <div class="field">
+                <label for="location">Location</label>
+                <input id="location" name="location" type="text" value="{{ user.location }}" required>
+            </div>
+            <div class="field">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+                    <option value="organiser" {% if user.role == 'organiser' %}selected{% endif %}>Organiser</option>
+                    <option value="volunteer" {% if user.role == 'volunteer' %}selected{% endif %}>Volunteer</option>
+                    <option value="buyer" {% if user.role == 'buyer' %}selected{% endif %}>Buyer</option>
+                </select>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+            <a class="btn btn-secondary" href="{{ url_for('admin_users') }}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

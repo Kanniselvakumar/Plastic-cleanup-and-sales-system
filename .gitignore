@@ -16,6 +16,8 @@ venvsource/
 
 # uploads (optional)
 uploads/
+register_app/static/uploads/
+model_artifacts/
 
 # logs
 *.log

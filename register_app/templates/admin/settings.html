@@ -1,0 +1,81 @@
+{% extends 'admin/layout.html' %}
+
+{% block title %}System Settings{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .panel {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+        padding: 2rem;
+    }
+
+    .panel h2 {
+        color: #052d14;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .field label {
+        color: #1f2937;
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.4rem;
+    }
+
+    .field input[type="text"],
+    .field input[type="email"] {
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-sizing: border-box;
+        padding: 0.8rem 0.9rem;
+        width: 100%;
+    }
+
+    .checkbox-row {
+        align-items: center;
+        display: flex;
+        gap: 0.65rem;
+        color: #1f2937;
+        font-weight: 600;
+    }
+
+    .btn {
+        background: #087d04;
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        cursor: pointer;
+        margin-top: 1.5rem;
+        padding: 0.8rem 1.2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="panel">
+    <h2>System Settings</h2>
+    <form method="post">
+        <div class="form-grid">
+            <div class="field">
+                <label for="site_name">Site Name</label>
+                <input id="site_name" name="site_name" type="text" value="{{ settings.get('site_name', 'Plastic Cleanup and Sales System') }}">
+            </div>
+            <div class="field">
+                <label for="contact_email">Contact Email</label>
+                <input id="contact_email" name="contact_email" type="email" value="{{ settings.get('contact_email', '') }}">
+            </div>
+            <label class="checkbox-row" for="maintenance_mode">
+                <input id="maintenance_mode" name="maintenance_mode" type="checkbox" {% if settings.get('maintenance_mode') in ['True', 'true', True] %}checked{% endif %}>
+                Enable maintenance mode
+            </label>
+        </div>
+        <button class="btn" type="submit">Save Settings</button>
+    </form>
+</div>
+{% endblock %}

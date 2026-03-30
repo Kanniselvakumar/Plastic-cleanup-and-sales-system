@@ -3,6 +3,9 @@ import mysql.connector
 from mysql.connector import Error
 import bcrypt
 import os
+import random
+from pathlib import Path
+from urllib.parse import unquote, urlparse
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 import requests 
@@ -19,41 +22,83 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 import joblib
 
-app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'your_secret_key')
+BASE_DIR = Path(__file__).resolve().parent
+APP_DIR = BASE_DIR / 'register_app'
+TEMPLATE_DIR = APP_DIR / 'templates'
+STATIC_DIR = APP_DIR / 'static'
+DEFAULT_UPLOAD_DIR = STATIC_DIR / 'uploads'
+DEFAULT_MODEL_ARTIFACT_DIR = BASE_DIR / 'model_artifacts'
+
+app = Flask(
+    __name__,
+    template_folder=str(TEMPLATE_DIR),
+    static_folder=str(STATIC_DIR),
+)
+app.secret_key = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 
 mail = Mail()
 
 # Register the donation blueprint
 #app.register_blueprint(donation_bp)
 
-# Database configuration - uses environment variables on Railway
-DATABASE_CONFIG = {
-    'host': os.environ.get('MYSQLHOST', 'localhost'),
-    'user': os.environ.get('MYSQLUSER', 'root'),
-    'password': os.environ.get('MYSQLPASSWORD', 'Ksksuriya1826'),
-    'database': os.environ.get('MYSQLDATABASE', 'plastic_cleanup_db'),
-    'port': int(os.environ.get('MYSQLPORT', 3306))
-}
+def env_flag(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {'1', 'true', 'yes', 'on'}
+
+
+def build_database_config():
+    database_url = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL')
+    if database_url:
+        parsed = urlparse(database_url)
+        if parsed.scheme not in {'mysql', 'mysql+mysqlconnector', 'mysql+pymysql'}:
+            raise ValueError('DATABASE_URL must use a MySQL connection string.')
+        return {
+            'host': parsed.hostname or 'localhost',
+            'user': unquote(parsed.username or ''),
+            'password': unquote(parsed.password or ''),
+            'database': parsed.path.lstrip('/'),
+            'port': parsed.port or 3306,
+        }
+
+    return {
+        'host': os.environ.get('MYSQLHOST', 'localhost'),
+        'user': os.environ.get('MYSQLUSER', 'root'),
+        'password': os.environ.get('MYSQLPASSWORD', ''),
+        'database': os.environ.get('MYSQLDATABASE', 'plastic_cleanup_db'),
+        'port': int(os.environ.get('MYSQLPORT', 3306)),
+    }
+
+
+DATABASE_CONFIG = build_database_config()
 
 
 def init_mail(app):
     app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', 'kanniselvakumar@gmail.com')
-    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', 'ebae tmef whzc xytb')
+    app.config['MAIL_USE_TLS'] = env_flag('MAIL_USE_TLS', True)
+    app.config['MAIL_USE_SSL'] = env_flag('MAIL_USE_SSL', False)
+    app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME', '')
+    app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD', '')
+    app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER') or app.config['MAIL_USERNAME'] or None
     mail.init_app(app)
 
 init_mail(app)
 
 # File upload settings
 NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse"
-UPLOAD_FOLDER = 'static/uploads/'
+UPLOAD_FOLDER = Path(os.environ.get('UPLOAD_FOLDER', str(DEFAULT_UPLOAD_DIR)))
+MODEL_ARTIFACT_DIR = Path(os.environ.get('MODEL_ARTIFACT_DIR', str(DEFAULT_MODEL_ARTIFACT_DIR)))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = str(UPLOAD_FOLDER)
 # Create uploads directory if it doesn't exist
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+os.makedirs(MODEL_ARTIFACT_DIR, exist_ok=True)
+
+
+def model_artifact_path(filename):
+    return str(MODEL_ARTIFACT_DIR / filename)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -65,7 +110,21 @@ def create_connection():
     except Error as e:
         print(f"Error connecting to MySQL: {e}")
         return None
-    
+
+
+def ensure_system_settings_table(cursor):
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS system_settings (
+            setting_key VARCHAR(100) PRIMARY KEY,
+            setting_value TEXT
+        )
+    """)
+
+
+@app.route('/healthz')
+def healthz():
+    return jsonify({'status': 'ok'}), 200
+
 
 @app.route('/')
 def home():
@@ -607,6 +666,7 @@ def admin_system_settings():
         connection = create_connection()
         try:
             cursor = connection.cursor()
+            ensure_system_settings_table(cursor)
             for key, value in settings.items():
                 cursor.execute("""
                     INSERT INTO system_settings (setting_key, setting_value)
@@ -624,6 +684,7 @@ def admin_system_settings():
     connection = create_connection()
     try:
         cursor = connection.cursor(dictionary=True)
+        ensure_system_settings_table(cursor)
         cursor.execute("SELECT * FROM system_settings")
         settings = {row['setting_key']: row['setting_value'] for row in cursor.fetchall()}
         return render_template('admin/settings.html', settings=settings)
@@ -721,7 +782,7 @@ def forgot_password():
                 reset_url = url_for('reset_password', token=reset_token, _external=True)
                 msg = Message(
                     'Password Reset Request',
-                    sender='kanniselvakumar@gmail.com',
+                    sender=app.config.get('MAIL_DEFAULT_SENDER'),
                     recipients=[email]
                 )
                 msg.body = f'''To reset your password, visit the following link:
@@ -4315,10 +4376,10 @@ def train_xgboost_model():
     model = xgb.train(param, dtrain, num_round, evals=evallist, early_stopping_rounds=10, verbose_eval=True)
     
     # Save model, encoders, and rating mappings
-    model.save_model("xgboost_model.json")
-    joblib.dump(le_user, "le_user.pkl")
-    joblib.dump(le_product, "le_product.pkl")
-    joblib.dump(le_category, "le_category.pkl")
+    model.save_model(model_artifact_path("xgboost_model.json"))
+    joblib.dump(le_user, model_artifact_path("le_user.pkl"))
+    joblib.dump(le_product, model_artifact_path("le_product.pkl"))
+    joblib.dump(le_category, model_artifact_path("le_category.pkl"))
     
     # Save rating mapping information and additional metadata
     rating_info = {
@@ -4330,7 +4391,7 @@ def train_xgboost_model():
         "num_users": len(le_user.classes_),
         "num_products": len(le_product.classes_)
     }
-    joblib.dump(rating_info, "rating_info.pkl")
+    joblib.dump(rating_info, model_artifact_path("rating_info.pkl"))
     
     # Add feature importance analysis
     importance = model.get_score(importance_type='gain')
@@ -4346,10 +4407,10 @@ def train_xgboost_model():
 def load_model():
     try:
         model = xgb.Booster()
-        model.load_model("xgboost_model.json")
-        le_user = joblib.load("le_user.pkl")
-        le_product = joblib.load("le_product.pkl")
-        rating_info = joblib.load("rating_info.pkl")
+        model.load_model(model_artifact_path("xgboost_model.json"))
+        le_user = joblib.load(model_artifact_path("le_user.pkl"))
+        le_product = joblib.load(model_artifact_path("le_product.pkl"))
+        rating_info = joblib.load(model_artifact_path("rating_info.pkl"))
         print("Model loaded successfully!")
         return model, le_user, le_product, rating_info
     except Exception as e:

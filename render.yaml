@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: plastic-cleanup-and-sales-system
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.11
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: MYSQLHOST
+        sync: false
+      - key: MYSQLPORT
+        value: "3306"
+      - key: MYSQLUSER
+        sync: false
+      - key: MYSQLPASSWORD
+        sync: false
+      - key: MYSQLDATABASE
+        sync: false
+      - key: MAIL_SERVER
+        value: smtp.gmail.com
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USE_TLS
+        value: "true"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_DEFAULT_SENDER
+        sync: false
